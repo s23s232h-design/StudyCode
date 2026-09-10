@@ -1,7 +1,26 @@
 import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabaseClient";
+import Reply from "./Reply.jsx";
 
 function PostDetail({ posts }) {
   const { postId } = useParams();
+  const [replies, setReplies] = useState([]);
+  useEffect(() => {
+    async function loadReplies() {
+        const { data, error } = await supabase
+          .from("replies")
+          .select("*, profiles (username)")
+          .eq("post_id", Number(postId))
+          .order("created_at", { ascending: true });
+        if(error) {
+            console.log(error.message);
+            return;
+        }    
+        setReplies(data);
+    }
+    loadReplies();
+  }, [postid]);
 
   const post = posts.find(
     (post) => String(post.id) === postId
@@ -32,6 +51,18 @@ function PostDetail({ posts }) {
       <h2>「{post.term}」</h2>
       <p>{post.explanation}</p>
       <p>♡ {post.likes?.length ?? 0}</p>
+      <h3>返信</h3>
+      {replies.length === 0 ? (
+        <p>まだ返信はありません</p>
+      ) : (
+        replies.map((reply) => (
+            <Reply
+              key={reply.id}
+              username={reply.profiles?.username}
+              constent={reply.content}
+            />
+        ))
+      )}
     </div>
   );
 }
