@@ -1,6 +1,8 @@
 import RelativeTime from "./RelativeTime.jsx";
+import { Link } from "react-router-dom";
 
 function Reply({
+  userId,
   username,
   content,
   createdAt,
@@ -9,7 +11,11 @@ function Reply({
 }) {
   return (
     <div>
-      <p>{username}</p>
+      <p>
+        <Link to={`/users/${userId}`}>
+          {username}
+        </Link>
+      </p>
       <RelativeTime createdAt={createdAt} />
       <p>{content}</p>
       {canDelete && (

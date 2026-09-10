@@ -100,9 +100,10 @@ function PostDetail({ posts, user }) {
         replies.map((reply) => (
             <Reply
               key={reply.id}
+              userId={reply.user_id}
               username={reply.profiles?.username}
               content={reply.content}
-              createdAt={reply.createdAt}
+              createdAt={reply.created_at}
               canDelete={user && reply.user_id === user.id}
               onDelete={() => deleteReply(reply.id)}
             />
