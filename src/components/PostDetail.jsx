@@ -2,8 +2,9 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import Reply from "./Reply.jsx";
+import ReplyForm from "./ReplyForm.jsx";
 
-function PostDetail({ posts }) {
+function PostDetail({ posts, user }) {
   const { postId } = useParams();
   const [replies, setReplies] = useState([]);
   useEffect(() => {
@@ -39,6 +40,29 @@ function PostDetail({ posts }) {
 
     return `${hours}:${minutes} ${year}/${month}/${day}`;
   }
+  async function addReply(content) {
+    if(!user) {
+        alert("返信するにはログインしてください");
+        return;
+    }
+    const { data, error } = await supabase
+      .from("replies")
+      .insert({
+        user_id: user.id,
+        post_id: Number(postId),
+        content: content
+      })
+      .select("*, profiles (username)")
+      .single();
+    if(error) {
+        console.log(error.message);
+        return;
+    }
+    setReplies((currentReplies) => [
+        ...currentReplies,
+        data
+    ]);
+  }
 
   return (
     <div>
@@ -52,6 +76,9 @@ function PostDetail({ posts }) {
       <p>{post.explanation}</p>
       <p>♡ {post.likes?.length ?? 0}</p>
       <h3>返信</h3>
+      {user && (
+        <ReplyForm onSubmitReply={addReply} />
+      )}
       {replies.length === 0 ? (
         <p>まだ返信はありません</p>
       ) : (

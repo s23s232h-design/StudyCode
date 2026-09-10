@@ -255,7 +255,12 @@ function App() {
         />
         <Route
           path="/posts/:postId"
-          element={<PostDetail posts={posts} />} 
+          element={
+            <PostDetail
+              posts={posts}
+              user={user}
+             />
+          } 
         />
       </Routes>
     </div>
