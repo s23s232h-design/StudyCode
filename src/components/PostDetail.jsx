@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabaseClient";
 import Reply from "./Reply.jsx";
 import ReplyForm from "./ReplyForm.jsx";
 
-function PostDetail({ posts, user }) {
+function PostDetail({ user }) {
   const { postId } = useParams();
   const [replies, setReplies] = useState([]);
   const [post, setPost] = useState(null);
