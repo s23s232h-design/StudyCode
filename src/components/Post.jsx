@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RelativeTime from "../components/RelativeTime.jsx";
 
 function Post({
@@ -16,10 +16,16 @@ function Post({
   setPostToDelete,
   setPostToEdit
 }) {
+  const navigate = useNavigate();
   return (
-    <div>
+    <div 
+      onClick={() => navigate(`/posts/${id}`)}
+    >
       <p>
-        <Link to={`/users/${userId}`}>
+        <Link
+          to={`/users/${userId}`}
+          onClick={(event) => event.stopPropagation()}
+        >
           {username}
         </Link>
       </p>
@@ -27,30 +33,37 @@ function Post({
       <h2>「{term}」</h2>
       <p>{explanation}</p>
 
-      <button onClick={() => likePost(id)}>
+      <button
+        onClick={(event) => {
+          event.stopPropagation();
+          likePost(id);
+        }}
+      >
         {isLiked ? "♥" : "♡"} {likes}
       </button>
       {deletePost && (
         <button
-          onClick={() =>
+          onClick={(event) => {
+            event.stopPropagation();
             setPostToDelete({
               id: id,
               term: term
-            })
-          }
+            });
+          }}
         >
           削除
         </button>
       )}
       {canEdit && (
         <button
-          onClick={() => 
+          onClick={(event) => {
+            event.stopPropagation();
             setPostToEdit({
               id,
               term,
               explanation
             })
-          }
+          }}
         >
           編集
         </button>
