@@ -257,7 +257,6 @@ function App() {
           path="/posts/:postId"
           element={
             <PostDetail
-              posts={posts}
               user={user}
              />
           } 
