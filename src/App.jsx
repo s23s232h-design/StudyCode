@@ -8,6 +8,7 @@ import Home from "./components/Home.jsx";
 import Login from "./components/Login.jsx";
 import UserProfile from "./components/UserProfile.jsx";
 import SearchPage from "./components/SearchPage.jsx";
+import PostDetail from "./components/PostDetail.jsx";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -251,6 +252,10 @@ function App() {
               user={user}
              />
           }
+        />
+        <Route
+          path="/posts/:postId"
+          element={<PostDetail posts={posts} />} 
         />
       </Routes>
     </div>
