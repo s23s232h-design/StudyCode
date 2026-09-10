@@ -1,4 +1,4 @@
-import { createRoutesFromElements, Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import Reply from "./Reply.jsx";
@@ -102,6 +102,7 @@ function PostDetail({ posts, user }) {
               key={reply.id}
               username={reply.profiles?.username}
               content={reply.content}
+              createdAt={reply.createdAt}
               canDelete={user && reply.user_id === user.id}
               onDelete={() => deleteReply(reply.id)}
             />
