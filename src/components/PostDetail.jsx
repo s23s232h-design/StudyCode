@@ -7,6 +7,9 @@ import ReplyForm from "./ReplyForm.jsx";
 function PostDetail({ posts, user }) {
   const { postId } = useParams();
   const [replies, setReplies] = useState([]);
+  const [post, setPost] = useState(null);
+  const [isLoadingPost, setIsLoadingPost] = useState(true);
+
   useEffect(() => {
     async function loadReplies() {
         const { data, error } = await supabase
@@ -22,10 +25,28 @@ function PostDetail({ posts, user }) {
     }
     loadReplies();
   }, [postId]);
+  
+  useEffect(() => {
+    async function loadPost() {
+        const { data, error } = await supabase
+          .from("posts")
+          .select("*, profiles (username), likes (user_id)")
+          .eq("id", Number(postId))
+          .single();
+        if(error) {
+            console.log(error.message);
+            setIsLoadingPost(false);
+            return;
+        }
+        setPost(data);
+        setIsLoadingPost(false);
+    }
+    loadPost();
+  }, [postId]);
 
-  const post = posts.find(
-    (post) => String(post.id) === postId
-  );
+  if(isLoadingPost) {
+    return <p>読み込み中...</p>;
+  }
 
   if (!post) {
     return <p>投稿が見つかりません。</p>;
