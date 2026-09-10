@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { createRoutesFromElements, Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import Reply from "./Reply.jsx";
@@ -63,6 +63,21 @@ function PostDetail({ posts, user }) {
         data
     ]);
   }
+  async function deleteReply(replyId) {
+    const { error } = await supabase
+      .from("replies")
+      .delete()
+      .eq("id", replyId);
+    if(error) {
+        console.log(error.message);
+        return;
+    }
+    setReplies((currentReplies) =>
+      currentReplies.filter(
+        (reply) => reply.id !== replyId
+      )
+    );
+  }
 
   return (
     <div>
@@ -87,6 +102,8 @@ function PostDetail({ posts, user }) {
               key={reply.id}
               username={reply.profiles?.username}
               content={reply.content}
+              canDelete={user && reply.user_id === user.id}
+              onDelete={() => deleteReply(reply.id)}
             />
         ))
       )}
