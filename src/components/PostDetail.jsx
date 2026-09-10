@@ -20,7 +20,7 @@ function PostDetail({ posts }) {
         setReplies(data);
     }
     loadReplies();
-  }, [postid]);
+  }, [postId]);
 
   const post = posts.find(
     (post) => String(post.id) === postId
@@ -59,7 +59,7 @@ function PostDetail({ posts }) {
             <Reply
               key={reply.id}
               username={reply.profiles?.username}
-              constent={reply.content}
+              content={reply.content}
             />
         ))
       )}
