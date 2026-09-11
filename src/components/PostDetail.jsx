@@ -89,7 +89,7 @@ function PostDetail({ user }) {
       .single();
     if(error) {
         console.log(error.message);
-        setReplyActionError("返信の投稿gitに失敗しました")
+        setReplyActionError("返信の投稿に失敗しました")
         return;
     }
     setReplyActionError("");
