@@ -17,20 +17,39 @@ function App() {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [usernameError, setUserNameError] = useState("");
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState("");
+
   useEffect(() => {
+    let ignore = false;
     async function getUser() {
       const {
         data: { user },
+        error
       } = await supabase.auth.getUser();
-      setUser(user); 
+      if(ignore) {
+        return;
+      }
+      if(error) {
+        console.log(error.message);
+        setAuthError("ログイン情報の読み込みに失敗しました")
+        setIsAuthLoading(false);
+        return;
+      }
+      setUser(user);
+      setAuthError("");
+      setIsAuthLoading(false); 
     }
     getUser();
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      setAuthError("");
+      setIsAuthLoading(false);
     });
     return () => {
+      ignore = true;
       subscription.unsubscribe();
     };
   }, []);
@@ -160,10 +179,18 @@ function App() {
       setPosts(newPosts);
     }
   }
+  if(isAuthLoading) {
+    return <p role="status">読み込み中...</p>
+  }
   
   return (
     <div>
       <h2>StudyCode</h2>
+      {authError && (
+        <p className="error" role="alert">
+          {authError}
+        </p>
+      )}
       <p>みんなの学びを見てみよう！</p>
       {/*NavLinkのto=で指定したURLへ移動する:*/}      
       <nav>
