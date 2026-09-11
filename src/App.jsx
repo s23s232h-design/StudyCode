@@ -12,6 +12,8 @@ import PostDetail from "./components/PostDetail.jsx";
 
 function App() {
   const [posts, setPosts] = useState([]);
+  const [isPostsLoading, setIsPostsLoading] = useState(true);
+  const [postsError, setPostsError] = useState("");
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   useEffect(() => {
@@ -32,18 +34,36 @@ function App() {
     };
   }, []);
   useEffect(() => {
+    let ignore = false;
     async function loadPosts() {
-      const { data, error } = await supabase
-        .from("posts")
-        .select("*, profiles (username), likes (user_id)")
-        .order("created_at", {ascending: false});
-      if(error) {
-        console.log(error.message);
-        return;
+      setIsPostsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("posts")
+          .select("*, profiles (username), likes (user_id)")
+          .order("created_at", {ascending: false});
+        if(error) {
+          throw error;
+        }
+        if (!ignore) {
+          setPosts(data ?? []);
+          setPostsError("");
+        }
+      } catch (error) {
+        if (!ignore) {
+          console.log(error.message);
+          setPostsError("投稿の読み込みに失敗しました");
+        }
+      } finally {
+        if (!ignore) {
+          setIsPostsLoading(false);
+        }
       }
-      setPosts(data);  
     }
     loadPosts();
+    return () => {
+      ignore = true;
+    };
   }, []);
   useEffect(() => {
     async function loadUsername() {
@@ -200,6 +220,8 @@ function App() {
           element={
             <Home
               posts={posts}
+              isPostsLoading={isPostsLoading}
+              postsError={postsError}
               likePost={likePost}
               user={user}
             />
@@ -210,6 +232,8 @@ function App() {
           element={
             <SearchPage
               posts={posts}
+              isPostsLoading={isPostsLoading}
+              postsError={postsError}
               user={user}
               likePost={likePost} 
             />
@@ -220,6 +244,8 @@ function App() {
           element={
             <PostPage
               posts={posts}
+              isPostsLoading={isPostsLoading}
+              postsError={postsError}
               setPosts={setPosts}
               likePost={likePost}
               user={user}
@@ -248,6 +274,8 @@ function App() {
           element={
             <UserProfile
               posts={posts}
+              isPostsLoading={isPostsLoading}
+              postsError={postsError}
               likePost={likePost}
               user={user}
              />

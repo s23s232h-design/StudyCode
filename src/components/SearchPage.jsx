@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Post from "../components/Post.jsx";
 
-function SearchPage({ posts, user, likePost }) {
+function SearchPage({ posts, user, likePost, isPostsLoading, postsError }) {
   const [searchWord, setSearchWord] = useState("");
   const [searchTarget, setSearchTarget] = useState("both");
   const [sortType, setSortType] = useState("new");
@@ -85,7 +85,11 @@ function SearchPage({ posts, user, likePost }) {
         </label>
       </div>
       <div>
-        {searchWord.trim() !== "" && filteredPosts.length === 0 ? (
+        {isPostsLoading ? (
+            <p role="status">読み込み中...</p>
+        ) : postsError ? (
+            <p className="error" role="alert">{postsError}</p>
+        ) : searchWord.trim() !== "" && filteredPosts.length === 0 ? (
             <p>該当する投稿がありません</p>
         ) : (
           sortedPosts.map((post) => (

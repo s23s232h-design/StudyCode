@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import Post from "./Post";
 
-function UserProfile( { posts, likePost, user }) {
+function UserProfile( { posts, likePost, user, isPostsLoading, postsError }) {
     const { userId } = useParams();
     const [username, setUsername] = useState("");
     const [introduction, setIntroduction] = useState("");
@@ -13,56 +13,70 @@ function UserProfile( { posts, likePost, user }) {
     const [materials, setMaterials] = useState([]);
     const [portfolios, setPortfolios] = useState([]);
     const [totalStudySeconds, setTotalStudySeconds] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
+        let ignore = false;
         async function loadUserProfile() {
-            const { data, error } = await supabase
-              .from("profiles")
-              .select("username, introduction")
-              .eq("id", userId)
-              .maybeSingle();
-            if(error) {
-                console.log(error.message);
-                return;
-            }
-            if(data) {
-                setUsername(data.username ?? "");
-                setIntroduction(data.introduction ?? "");
-            }
-            const {data: materialData, error: materialError} = await supabase
-              .from("materials")
-              .select("id, name")
-              .eq("user_id", userId);
-
+            setIsLoading(true);
+            try {
+              const { data, error } = await supabase
+                .from("profiles")
+                .select("username, introduction")
+                .eq("id", userId)
+                .maybeSingle();
+              if(error) {
+                throw error;
+              }
+              const {data: materialData, error: materialError} = await supabase
+                .from("materials")
+                .select("id, name")
+                .eq("user_id", userId);
               if (materialError) {
-                console.log(materialError.message);
+                throw materialError;
+              }
+              const { data: portfolioData, error: portfolioError } = await supabase
+                .from("portfolios")
+                .select("id, title, url")
+                .eq("user_id", userId);
+              if (portfolioError) {
+                throw portfolioError;
+              }
+              const { data: studyTimeData, error: studyTimeError } = await supabase
+                .from("study_times")
+                .select("seconds")
+                .eq("user_id", userId);
+              if (studyTimeError) {
+                throw studyTimeError;
+              }
+              if (ignore) {
                 return;
               }
-
-            setMaterials(materialData);
-            const { data: portfolioData, error: portfolioError } = await supabase
-              .from("portfolios")
-              .select("id, title, url")
-              .eq("user_id", userId);
-            if (portfolioError) {
-              console.log(portfolioError.message);
-              return;
+              setUsername(data?.username ?? "");
+              setIntroduction(data?.introduction ?? "");
+              setMaterials(materialData ?? []);
+              setPortfolios(portfolioData ?? []);
+              const total = (studyTimeData ?? []).reduce((sum, record) => {
+                return sum + record.seconds;
+              }, 0);
+              setTotalStudySeconds(total);
+              setErrorMessage("");
+            } catch (error) {
+              if (!ignore) {
+                console.log(error.message);
+                setErrorMessage("プロフィールの読み込みに失敗しました");
+              }
+            } finally {
+              if (!ignore) {
+                setIsLoading(false);
+              }
             }
-            setPortfolios(portfolioData);
-            const { data: studyTimeData, error: studyTimeError } = await supabase
-              .from("study_times")
-              .select("seconds")
-              .eq("user_id", userId);
-            if (studyTimeError) {
-              console.log(studyTimeError.message);
-              return;
-            }
-            const total = studyTimeData.reduce((sum, record) => {
-              return sum + record.seconds;
-            }, 0);
-            setTotalStudySeconds(total);
         }
         loadUserProfile();
+        return () => {
+          ignore = true;
+        };
     }, [userId]);
     const totalHours = Math.floor(totalStudySeconds / 3600);
     const totalMinutes = Math.floor(
@@ -71,45 +85,57 @@ function UserProfile( { posts, likePost, user }) {
     return(
         <div>
           <h3>ユーザープロフィール</h3>
-          <p>ユーザー名：{username || "未設定"}</p>
-          <p>自己紹介：{introduction || "未設定"}</p>
-          <p>
-            累計学習時間：
-            {totalHours}時間{totalMinutes}分
-          </p>
-          <h3>使用している教材</h3>
-          {materials.length === 0 ? (
-            <p>登録されている教材はありません</p>
+          {isLoading ? (
+            <p role="status">読み込み中...</p>
+          ) : errorMessage ? (
+            <p className="error" role="alert">{errorMessage}</p>
           ) : (
-            <ul>
-              {materials.map((material) => (
-                <li key={material.id}>
-                  {material.name}
-                </li>
-              ))}
-            </ul>
-          )}
-          <h3>ポートフォリオ</h3>
-          {portfolios.length === 0 ? (
-            <p>登録されているポートフォリオはありません</p>
-          ) : (
-            <ul>
-              {portfolios.map((portfolio) => (
-                <li key={portfolio.id}>
-                  {portfolio.title} :{" "}
-                  <a 
-                    href={portfolio.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {portfolio.url}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <>
+              <p>ユーザー名：{username || "未設定"}</p>
+              <p>自己紹介：{introduction || "未設定"}</p>
+              <p>
+                累計学習時間：
+                {totalHours}時間{totalMinutes}分
+              </p>
+              <h3>使用している教材</h3>
+              {materials.length === 0 ? (
+                <p>登録されている教材はありません</p>
+              ) : (
+                <ul>
+                  {materials.map((material) => (
+                    <li key={material.id}>
+                      {material.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <h3>ポートフォリオ</h3>
+              {portfolios.length === 0 ? (
+                <p>登録されているポートフォリオはありません</p>
+              ) : (
+                <ul>
+                  {portfolios.map((portfolio) => (
+                    <li key={portfolio.id}>
+                      {portfolio.title} :{" "}
+                      <a
+                        href={portfolio.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {portfolio.url}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           )}
           <h3>投稿</h3>
-          {userPosts.length === 0 ? (
+          {isPostsLoading ? (
+            <p role="status">読み込み中...</p>
+          ) : postsError ? (
+            <p className="error" role="alert">{postsError}</p>
+          ) : userPosts.length === 0 ? (
             <p>まだ投稿がありません</p>
           ) : (
             userPosts.map((post) => (

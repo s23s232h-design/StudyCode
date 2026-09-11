@@ -1,5 +1,5 @@
 import Post from "./Post";
-function Home({ posts, likePost, user}) {
+function Home({ posts, likePost, user, isPostsLoading, postsError }) {
     const timelinePosts = [...posts]
       .sort((a, b) => b.id - a.id)
       .slice(0, 10);
@@ -13,7 +13,11 @@ function Home({ posts, likePost, user}) {
                 投稿やいいねをするにはログインしてください
               </p>
             )}
-            {timelinePosts.length === 0 ? (
+            {isPostsLoading ? (
+                <p role="status">読み込み中...</p>
+            ) : postsError ? (
+                <p className="error" role="alert">{postsError}</p>
+            ) : timelinePosts.length === 0 ? (
                 <p>まだ投稿がありません</p>
             ) : (
               timelinePosts.map((post) => (

@@ -11,73 +11,85 @@ function Profile( {user, setAppUsername } ) {
   const [portfolioUrlInput, setPortfolioUrlInput] = useState("");
   const [portfolioTitleInput, setPortfolioTitleInput] = useState("");
   const [totalStudySeconds, setTotalStudySeconds] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const totalHours = Math.floor(totalStudySeconds / 3600);
   const totalMinutes = Math.floor((totalStudySeconds % 3600) / 60);
 
   useEffect(() => {
+    let ignore = false;
     async function loadProfile() {
       if(!user) {
         return;
       }
-      const{ data, error } = await supabase
-        .from("profiles")
-        .select("username, introduction")
-        .eq("id", user.id)
-        .maybeSingle();
-      if(error) {
-        console.log(error.message);
-        return;
-      }
-      if(data) {
-        setUsername(data.username ?? "");
-        setIntroduction(data.introduction ?? "");
-      }
-      const { data: materialData, error: materialError } = await supabase
-        .from("materials")
-        .select("id, name")
-        .eq("user_id", user.id);
-      if(materialError) {
-        console.log(materialError.message);
-        return;
-      }  
-      setMaterials(
-        materialData.map((material) => {
-          return {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("username, introduction")
+          .eq("id", user.id)
+          .maybeSingle();
+        if(error) {
+          throw error;
+        }
+        const { data: materialData, error: materialError } = await supabase
+          .from("materials")
+          .select("id, name")
+          .eq("user_id", user.id);
+        if(materialError) {
+          throw materialError;
+        }
+        const { data: portfolioData, error: portfolioError } = await supabase
+          .from("portfolios")
+          .select("id, title, url")
+          .eq("user_id", user.id);
+        if (portfolioError) {
+          throw portfolioError;
+        }
+        const { data: studyTimeData, error: studyTimeError } = await supabase
+          .from("study_times")
+          .select("seconds")
+          .eq("user_id", user.id);
+        if (studyTimeError) {
+          throw studyTimeError;
+        }
+        if (ignore) {
+          return;
+        }
+        setUsername(data?.username ?? "");
+        setIntroduction(data?.introduction ?? "");
+        setMaterials(
+          (materialData ?? []).map((material) => ({
             ...material,
             deleted: false
-          };
-        })
-      );
-      const { data: portfolioData, error: portfolioError } = await supabase
-        .from("portfolios")
-        .select("id, title, url")
-        .eq("user_id", user.id);
-      if (portfolioError) {
-        console.log(portfolioError.message);
-        return;
-      }
-      setPortfolios(
-        portfolioData.map((portfolio) => {
-          return {
+          }))
+        );
+        setPortfolios(
+          (portfolioData ?? []).map((portfolio) => ({
             ...portfolio,
             deleted: false
-          };
-        })
-      );
-      const { data: studyTimeData, error: studyTimeError } = await supabase
-        .from("study_times")
-        .select("seconds")
-        .eq("user_id", user.id);
-      if (studyTimeError) {
-        console.log(studyTimeError.message);
-        return;
+          }))
+        );
+        const total = (studyTimeData ?? []).reduce((sum, record) => {
+          return sum + record.seconds;
+        }, 0);
+        setTotalStudySeconds(total);
+        setErrorMessage("");
+      } catch (error) {
+        if (!ignore) {
+          console.log(error.message);
+          setErrorMessage("プロフィールの読み込みに失敗しました");
+        }
+      } finally {
+        if (!ignore) {
+          setIsLoading(false);
+        }
       }
-      const total = studyTimeData.reduce((sum, record) => {
-        return sum + record.seconds;
-      }, 0);
-      setTotalStudySeconds(total);
     }
     loadProfile();
+    return () => {
+      ignore = true;
+    };
   }, [user]);
 
   function addPortfolio(){
@@ -253,60 +265,61 @@ function Profile( {user, setAppUsername } ) {
         })
       ]);
     setIsEditing(false);
+    setErrorMessage("");
   }
   async function cancelEdit() {
     if(!user) {
       return;
     }
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("username, introduction")
-      .eq("id", user.id)
-      .maybeSingle();
-    if(error) {
-        console.log(error.message);
-        return;
-    }
-    if(data) {
-      setUsername(data.username ?? "");
-      setIntroduction(data.introduction ?? "");
-    }
-    const { data: materialData, error: materialError} = await supabase
-      .from("materials")
-      .select("id, name")
-      .eq("user_id", user.id);
-    if (materialError) {
-      console.log(materialError.message);
-      return;
-    }
-    setMaterials(
-      materialData.map((material) => {
-        return {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("username, introduction")
+        .eq("id", user.id)
+        .maybeSingle();
+      if(error) {
+        throw error;
+      }
+      const { data: materialData, error: materialError} = await supabase
+        .from("materials")
+        .select("id, name")
+        .eq("user_id", user.id);
+      if (materialError) {
+        throw materialError;
+      }
+      const { data: portfolioData, error: portfolioError } = await supabase
+        .from("portfolios")
+        .select("id, title, url")
+        .eq("user_id", user.id);
+      if (portfolioError) {
+        throw portfolioError;
+      }
+      setUsername(data?.username ?? "");
+      setIntroduction(data?.introduction ?? "");
+      setMaterials(
+        (materialData ?? []).map((material) => ({
           ...material,
           deleted: false
-        };
-      })
-    );
-    const { data: portfolioData, error: portfolioError } = await supabase
-      .from("portfolios")
-      .select("id, title, url")
-      .eq("user_id", user.id);
-    if (portfolioError) {
-      console.log(portfolioError.message);
-      return;
-    }
-    setPortfolios(
-      portfolioData.map((portfolio) => {
-        return {
+        }))
+      );
+      setPortfolios(
+        (portfolioData ?? []).map((portfolio) => ({
           ...portfolio,
           deleted: false
-        };
-      })
-    );
-    setPortfolioTitleInput("");
-    setPortfolioUrlInput("");
-    setMaterialInput("");
-    setIsEditing(false);
+        }))
+      );
+      setPortfolioTitleInput("");
+      setPortfolioUrlInput("");
+      setMaterialInput("");
+      setIsEditing(false);
+      setErrorMessage("");
+    } catch (error) {
+      console.log(error.message);
+      setErrorMessage("プロフィールの読み込みに失敗しました");
+    } finally {
+      setIsLoading(false);
+    }
   }
   if(!user) {
     return (
@@ -319,7 +332,12 @@ function Profile( {user, setAppUsername } ) {
   return (
     <div>
       <h3>プロフィール</h3>
-        {isEditing ? (
+      {isLoading && <p role="status">読み込み中...</p>}
+      {!isLoading && errorMessage && (
+        <p className="error" role="alert">{errorMessage}</p>
+      )}
+      {!isLoading && (!errorMessage || isEditing) && (
+        isEditing ? (
           <div>
             <p>ユーザー名：</p>
             <input
@@ -428,7 +446,8 @@ function Profile( {user, setAppUsername } ) {
               編集
             </button>
           </div>
-        )}
+        )
+      )}
     </div>
   );
 }

@@ -5,7 +5,7 @@ import DeleteModal from "./DeleteModal.jsx";
 import EditPostModal from "./EditPostModal.jsx";
 import { supabase } from "../lib/supabaseClient.js";
 
-function PostPage({ posts, setPosts, likePost, user}){
+function PostPage({ posts, setPosts, likePost, user, isPostsLoading, postsError }){
   const [term, setTerm] = useState("");
   const [explanation, setExplanation] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -178,7 +178,11 @@ function PostPage({ posts, setPosts, likePost, user}){
           用語または説明
         </label>
 
-        {searchTerm.trim() !== "" && sortedPosts.length === 0 ? (
+        {isPostsLoading ? (
+          <p role="status">読み込み中...</p>
+        ) : postsError ? (
+          <p className="error" role="alert">{postsError}</p>
+        ) : searchTerm.trim() !== "" && sortedPosts.length === 0 ? (
           <p>該当する投稿がありません</p>
         ) : (
           sortedPosts.map((post) => (
