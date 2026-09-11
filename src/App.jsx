@@ -16,6 +16,7 @@ function App() {
   const [postsError, setPostsError] = useState("");
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
+  const [usernameError, setUserNameError] = useState("");
   useEffect(() => {
     async function getUser() {
       const {
@@ -69,6 +70,7 @@ function App() {
     async function loadUsername() {
       if(!user) {
         setUsername("");
+        setUserNameError("");
         return;
       }
       const { data, error } = await supabase
@@ -78,8 +80,10 @@ function App() {
         .maybeSingle();
       if(error) {
         console.log(error.message);
+        setUsernameError("ユーザー情報の読み込みに失敗しました");
         return;
       }
+      setUsernameError("");
       setUsername(data?.username ?? "");
     }
     loadUsername();
@@ -200,6 +204,11 @@ function App() {
         {user ? (
           <>
             <span>ログイン中：{username || user.email}</span>
+            {usernameError && (
+              <p className={"error"} role="alert">
+                {usernameError}
+              </p>
+            )}
             <button onClick={signOut}>
               ログアウト
             </button>
