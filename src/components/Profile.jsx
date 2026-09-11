@@ -15,6 +15,8 @@ function Profile( {user, setAppUsername } ) {
   const [errorMessage, setErrorMessage] = useState("");
   const totalHours = Math.floor(totalStudySeconds / 3600);
   const totalMinutes = Math.floor((totalStudySeconds % 3600) / 60);
+  const [saveErrorMessage, setSaveErrorMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -149,6 +151,9 @@ function Profile( {user, setAppUsername } ) {
       alert("プロフィールを保存するにはログインしてください")
       return;
     }
+    setIsSaving(true);
+    setSaveErrorMessage("");
+    try {
     const { error } = await supabase
       .from("profiles")
       .upsert({
@@ -157,8 +162,7 @@ function Profile( {user, setAppUsername } ) {
         introduction: introduction
       });
     if(error) {
-      console.log(error.message);
-      return;
+      throw error;
     }
     setAppUsername(username);
     const materialsToDelete = materials.filter((material) => {
@@ -173,8 +177,7 @@ function Profile( {user, setAppUsername } ) {
         .delete()
         .in("id", isToDelete);
       if(deleteMaterialError) {
-        console.log(deleteMaterialError.message);
-        return;
+        throw deleteMaterialError;
       }
     }
     const newMaterials = materials.filter((material) => {
@@ -194,8 +197,7 @@ function Profile( {user, setAppUsername } ) {
         )
         .select("id, name");
       if(insertMaterialError) {
-        console.log(insertMaterialError.message);
-        return;
+        throw insertMaterialError;
       }
       insertedMaterials = materialData;
     }
@@ -266,6 +268,13 @@ function Profile( {user, setAppUsername } ) {
       ]);
     setIsEditing(false);
     setErrorMessage("");
+    setSaveErrorMessage("");
+    } catch (error) {
+      console.log(error.message);
+      setSaveErrorMessage("プロフィールの保存に失敗しました")
+    } finally {
+      setIsSaving(false);
+    }
   }
   async function cancelEdit() {
     if(!user) {
@@ -407,9 +416,20 @@ function Profile( {user, setAppUsername } ) {
                   </li>
                 ))}        
               </ul>
-            <button onClick={saveProfile}>
-              保存
+            <button
+              onClick={saveProfile}
+              disabled={isSaving}
+            >
+              {isSaving ? "保存中..." : "保存"}
             </button>
+            {isSaving && (
+              <p role="status">保存中...</p>
+            )}
+            {!isSaving && saveErrorMessage && (
+              <p className="error" role="alert">
+                {saveErrorMessage}
+              </p>
+            )}
             <button onClick={cancelEdit}>
               キャンセル
             </button>

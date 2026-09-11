@@ -257,7 +257,7 @@ function StudyTimer({ user }) {
           )}
             <h3>学習タイマー</h3>
             <p>{displayHours}:{displayMinutes}:{displaySeconds}</p>
-            {isSaving && <p role="status">読み込み中...</p>}
+            {isSaving && <p role="status">記録中...</p>}
             {!isSaving && saveErrorMessage && (
               <p className="error" role="alert">{saveErrorMessage}</p>
             )}
