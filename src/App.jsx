@@ -16,7 +16,7 @@ function App() {
   const [postsError, setPostsError] = useState("");
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
-  const [usernameError, setUserNameError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authError, setAuthError] = useState("");
 

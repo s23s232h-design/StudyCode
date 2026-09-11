@@ -227,8 +227,7 @@ function Profile( {user, setAppUsername } ) {
         .in("id", idsToDelete);
 
       if (deletePortfolioError) {
-        console.log(deletePortfolioError.message);
-        return;
+        throw deletePortfolioError;
       }
     }
     const newPortfolios = portfolios.filter((portfolio) => {
@@ -249,8 +248,7 @@ function Profile( {user, setAppUsername } ) {
         )
         .select("id, title, url");
       if (insertPortfolioError) {
-        console.log(insertPortfolioError.message);
-        return;
+        throw insertPortfolioError;
       }
       insertedPortfolios = portfolioData;
     }
