@@ -11,6 +11,8 @@ function PostDetail({ user }) {
   const [isLoadingPost, setIsLoadingPost] = useState(true);
   const [postError, setPostError] = useState("");
   const [replyError, setReplyError] = useState("");
+  const [replyActionError, setReplyActionError] = useState(""); 
+  const [deleteReplyError, setDeleteReplyError] = useState("");
 
   useEffect(() => {
     async function loadReplies() {
@@ -23,7 +25,8 @@ function PostDetail({ user }) {
             console.log(error.message);
             setReplyError("返信の読み込みに失敗しました")
             return;
-        }    
+        }
+        setReplyError("");    
         setReplies(data);
     }
     loadReplies();
@@ -42,6 +45,7 @@ function PostDetail({ user }) {
             setIsLoadingPost(false);
             return;
         }
+        setPostError("");
         setPost(data);
         setIsLoadingPost(false);
     }
@@ -85,8 +89,10 @@ function PostDetail({ user }) {
       .single();
     if(error) {
         console.log(error.message);
+        setReplyActionError("返信の取得に失敗しました")
         return;
     }
+    setReplyActionError("");
     setReplies((currentReplies) => [
         ...currentReplies,
         data
@@ -99,8 +105,10 @@ function PostDetail({ user }) {
       .eq("id", replyId);
     if(error) {
         console.log(error.message);
+        setDeleteReplyError("返信の削除に失敗しました")
         return;
     }
+    setDeleteReplyError("");
     setReplies((currentReplies) =>
       currentReplies.filter(
         (reply) => reply.id !== replyId
@@ -126,6 +134,9 @@ function PostDetail({ user }) {
       {user && (
         <ReplyForm onSubmitReply={addReply} />
       )}
+      {replyActionError && (
+          <p>{replyActionError}</p>
+        )}
       {replyError ? null : (
         replies.length === 0 ? (
           <p>まだ返信はありません</p>
@@ -139,6 +150,7 @@ function PostDetail({ user }) {
               createdAt={reply.created_at}
               canDelete={user && reply.user_id === user.id}
               onDelete={() => deleteReply(reply.id)}
+              deleteReplyError={deleteReplyError}
             />
           ))
         )

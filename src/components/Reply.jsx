@@ -7,7 +7,8 @@ function Reply({
   content,
   createdAt,
   canDelete,
-  onDelete
+  onDelete,
+  deleteReplyError
 }) {
   return (
     <div>
@@ -22,6 +23,9 @@ function Reply({
         <button onClick={onDelete}>
           削除
         </button>
+      )}
+      {deleteReplyError && (
+        <p>{deleteReplyError}</p>
       )}
     </div>
   );
