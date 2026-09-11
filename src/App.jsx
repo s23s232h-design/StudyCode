@@ -89,7 +89,7 @@ function App() {
     async function loadUsername() {
       if(!user) {
         setUsername("");
-        setUserNameError("");
+        setUsernameError("");
         return;
       }
       const { data, error } = await supabase
