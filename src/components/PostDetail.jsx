@@ -9,6 +9,7 @@ function PostDetail({ user }) {
   const [replies, setReplies] = useState([]);
   const [post, setPost] = useState(null);
   const [isLoadingPost, setIsLoadingPost] = useState(true);
+  const [postError, setPostError] = useState("");
 
   useEffect(() => {
     async function loadReplies() {
@@ -35,6 +36,7 @@ function PostDetail({ user }) {
           .single();
         if(error) {
             console.log(error.message);
+            setPostError("投稿の読み込みに失敗しました")
             setIsLoadingPost(false);
             return;
         }
@@ -46,6 +48,10 @@ function PostDetail({ user }) {
 
   if(isLoadingPost) {
     return <p>読み込み中...</p>;
+  }
+
+  if(postError) {
+    return <p>{postError}</p>
   }
 
   if (!post) {
