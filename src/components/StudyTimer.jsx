@@ -283,7 +283,7 @@ function StudyTimer({ user }) {
               onClick={saveStudyTime}
               disabled={seconds === 0 || isLoading || Boolean(errorMessage) || isSaving}
             >
-              学習時間を記録
+              {isSaving ? "記録中..." : "学習時間を記録"}
             </button>
         </div>
     )
