@@ -10,6 +10,7 @@ function PostDetail({ user }) {
   const [post, setPost] = useState(null);
   const [isLoadingPost, setIsLoadingPost] = useState(true);
   const [postError, setPostError] = useState("");
+  const [replyError, setReplyError] = useState("");
 
   useEffect(() => {
     async function loadReplies() {
@@ -20,6 +21,7 @@ function PostDetail({ user }) {
           .order("created_at", { ascending: true });
         if(error) {
             console.log(error.message);
+            setReplyError("返信の読み込みに失敗しました")
             return;
         }    
         setReplies(data);
@@ -118,6 +120,9 @@ function PostDetail({ user }) {
       <p>{post.explanation}</p>
       <p>♡ {post.likes?.length ?? 0}</p>
       <h3>返信</h3>
+      {replyError && (
+        <p>{replyError}</p>
+      )}
       {user && (
         <ReplyForm onSubmitReply={addReply} />
       )}
