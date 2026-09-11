@@ -126,10 +126,11 @@ function PostDetail({ user }) {
       {user && (
         <ReplyForm onSubmitReply={addReply} />
       )}
-      {replies.length === 0 ? (
-        <p>まだ返信はありません</p>
-      ) : (
-        replies.map((reply) => (
+      {replyError ? null : (
+        replies.length === 0 ? (
+          <p>まだ返信はありません</p>
+        ) : (
+          replies.map((reply) => (
             <Reply
               key={reply.id}
               userId={reply.user_id}
@@ -139,7 +140,8 @@ function PostDetail({ user }) {
               canDelete={user && reply.user_id === user.id}
               onDelete={() => deleteReply(reply.id)}
             />
-        ))
+          ))
+        )
       )}
     </div>
   );
