@@ -19,6 +19,7 @@ function Post({
   const navigate = useNavigate();
   return (
     <div 
+      className="post-card"
       onClick={() => navigate(`/posts/${id}`)}
     >
       <p>

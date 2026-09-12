@@ -163,5 +163,15 @@ nav a {
 }
 
 nav a:hover {
-  background-color: "#eceff3";
+  background-color: #eceff3;
+}
+
+.post-card {
+  background-color: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  text-align: left;
+  cursor: pointer;
 }
