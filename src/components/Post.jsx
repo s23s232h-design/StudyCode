@@ -22,17 +22,19 @@ function Post({
       className="post-card"
       onClick={() => navigate(`/posts/${id}`)}
     >
-      <p>
+      <div className="post-header">
         <Link
+          className="post-username"
           to={`/users/${userId}`}
           onClick={(event) => event.stopPropagation()}
         >
           {username}
         </Link>
-      </p>
-      <RelativeTime createdAt={createdAt} />
-      <h2>「{term}」</h2>
-      <p>{explanation}</p>
+        <RelativeTime createdAt={createdAt} />
+      </div>
+      
+      <h2 className="post-term">「{term}」</h2>
+      <p className="post-explanation">{explanation}</p>
 
       <button
         onClick={(event) => {

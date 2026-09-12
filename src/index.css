@@ -180,3 +180,23 @@ nav a:hover {
   border-color: var(--accent-border);
   box-shadow: var(--shadow);
 }
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.post-username {
+  font-weight: bold;
+  color: var(--text-h);
+  text-decoration: none;
+}
+
+.post-term {
+  margin-bottom: 8px;
+}
+.post-explanation {
+  margin-bottom: 16px;
+}
