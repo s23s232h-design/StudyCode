@@ -30,7 +30,9 @@ function Post({
         >
           {username}
         </Link>
-        <RelativeTime createdAt={createdAt} />
+        <div className="post-time">
+          <RelativeTime createdAt={createdAt} />
+        </div>
       </div>
       
       <h2 className="post-term">「{term}」</h2>

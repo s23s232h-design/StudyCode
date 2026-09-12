@@ -238,3 +238,8 @@ nav a:hover {
   background-color: #fef2f2;
   border-color: #fecaca;
 }
+
+.post-time {
+  font-size: 13px;
+  color: #6b7280;
+}
