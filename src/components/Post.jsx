@@ -37,6 +37,7 @@ function Post({
       <p className="post-explanation">{explanation}</p>
       <div className="post-actions">
         <button
+          className={isLiked ? "like-button liked" : "like-button"}
           onClick={(event) => {
             event.stopPropagation();
             likePost(id);

@@ -214,3 +214,11 @@ nav a:hover {
   padding: 6px 10px;
   cursor: pointer;
 }
+
+.post-actions button:hover {
+  background-color: #f3f4f6;
+}
+
+.like-button.liked {
+  color: #e0245e;
+}
