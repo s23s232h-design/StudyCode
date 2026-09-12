@@ -200,3 +200,17 @@ nav a:hover {
 .post-explanation {
   margin-bottom: 16px;
 }
+
+.post-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.post-actions button {
+  border: 1px solid var(--border);
+  background-color: white;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}

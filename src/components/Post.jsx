@@ -35,42 +35,43 @@ function Post({
       
       <h2 className="post-term">「{term}」</h2>
       <p className="post-explanation">{explanation}</p>
-
-      <button
-        onClick={(event) => {
-          event.stopPropagation();
-          likePost(id);
-        }}
-      >
-        {isLiked ? "♥" : "♡"} {likes}
-      </button>
-      {deletePost && (
+      <div className="post-actions">
         <button
           onClick={(event) => {
             event.stopPropagation();
-            setPostToDelete({
-              id: id,
-              term: term
-            });
+            likePost(id);
           }}
         >
-          削除
+          {isLiked ? "♥" : "♡"} {likes}
         </button>
-      )}
-      {canEdit && (
-        <button
-          onClick={(event) => {
-            event.stopPropagation();
-            setPostToEdit({
-              id,
-              term,
-              explanation
-            })
-          }}
-        >
-          編集
-        </button>
-      )}
+        {deletePost && (
+          <button
+            onClick={(event) => {
+              event.stopPropagation();
+              setPostToDelete({
+                id: id,
+                term: term
+              });
+            }}
+          >
+            削除
+          </button>
+        )}
+        {canEdit && (
+          <button
+            onClick={(event) => {
+              event.stopPropagation();
+              setPostToEdit({
+                id,
+                term,
+                explanation
+              })
+            }}
+          >
+            編集
+          </button>
+        )}
+      </div>
     </div>
   );
 }
