@@ -150,5 +150,5 @@ nav {
   gap: 16px;
   padding: 16px 0;
   margin-bottom: 24px;
-  border-bottom: 1px solid var(--booder);
+  border-bottom: 1px solid var(--border);
 }
