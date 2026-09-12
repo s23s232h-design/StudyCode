@@ -175,3 +175,8 @@ nav a:hover {
   text-align: left;
   cursor: pointer;
 }
+
+.post-card:hover {
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow);
+}
