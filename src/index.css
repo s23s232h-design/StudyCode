@@ -52,12 +52,17 @@
 
 body {
   margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+  color: #222;
+
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 800px;
   margin: 0 auto;
+  padding: 24px;
   text-align: center;
   border-inline: 1px solid var(--border);
   min-height: 100svh;
@@ -155,17 +160,4 @@ button:disabled:not(.posting) {
 
 html {
   scrollbar-gutter: stable;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f5f7fa;
-  color: #222;
-}
-
-#root {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 24px;
 }
