@@ -222,3 +222,16 @@ nav a:hover {
 .like-button.liked {
   color: #e0245e;
 }
+
+.edit-button {
+  color: #374151;
+}
+
+.delete-button {
+  color: #dc2626;
+}
+
+.delete-button:hover {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}

@@ -47,6 +47,7 @@ function Post({
         </button>
         {deletePost && (
           <button
+            className="delete-button"
             onClick={(event) => {
               event.stopPropagation();
               setPostToDelete({
@@ -60,6 +61,7 @@ function Post({
         )}
         {canEdit && (
           <button
+            className="edit-button"
             onClick={(event) => {
               event.stopPropagation();
               setPostToEdit({
