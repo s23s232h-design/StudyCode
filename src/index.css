@@ -259,4 +259,8 @@ nav a:hover {
   #root {
     padding: 16px;
   }
+
+  .post-card {
+    padding: 16px;
+  }
 }
