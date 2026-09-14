@@ -121,7 +121,7 @@ function PostPage({ posts, setPosts, likePost, user, isPostsLoading, postsError 
 
   return (
     <div>
-        <h3>学んだことを投稿</h3>
+        <h3>学んだことを投稿しよう！</h3>
         <PostForm
           term={term}
           setTerm={setTerm}
@@ -133,6 +133,7 @@ function PostPage({ posts, setPosts, likePost, user, isPostsLoading, postsError 
           isPosting={isPosting}
         />
         <div className="search-controls">
+          <h3>過去の自分の投稿を検索</h3>
           <input 
             className="form-input"
             type="text"
