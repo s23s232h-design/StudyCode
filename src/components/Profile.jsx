@@ -337,7 +337,7 @@ function Profile( {user, setAppUsername } ) {
     );
   }
   return (
-    <div>
+    <div className="profile-form">
       <h3>プロフィール</h3>
       {isLoading && <p role="status">読み込み中...</p>}
       {!isLoading && errorMessage && (
@@ -346,26 +346,40 @@ function Profile( {user, setAppUsername } ) {
       {!isLoading && (!errorMessage || isEditing) && (
         isEditing ? (
           <div>
-            <p>ユーザー名：</p>
+            <label className="form-label">
+              ユーザー名
+            </label>
             <input
+              className="form-input"
               type="text"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
             />
-            <p>自己紹介：</p>
+            <label className="form-label">
+              自己紹介
+            </label>
             <textarea 
+              className="form-textarea"
               value={introduction}
               onChange={(event) => setIntroduction(event.target.value)}
             />
-            <p>使用している教材</p>
-            <input 
-              type="text"
-              value={materialInput}
-              onChange={(event) => setMaterialInput(event.target.value)}
-             />
-             <button onClick={addMaterial}>
-              追加
-             </button>
+            <label className="form-label">
+              使用している教材
+            </label>
+            <div className="inline-form">
+              <input
+                className="form-input" 
+                type="text"
+                value={materialInput}
+                onChange={(event) => setMaterialInput(event.target.value)}
+               />
+              <button
+                className="secondary-button"
+                onClick={addMaterial}
+              >
+                追加
+               </button>
+             </div>
              <ul>
                {materials.map((material, index) => (
                   <li key={index}>
@@ -382,22 +396,30 @@ function Profile( {user, setAppUsername } ) {
                  </li>
                ))}
              </ul>
-             <p>ポートフォリオ</p>
-             <input 
-               type="text"
-               placeholder="アプリ名を記載してください"
-               value={portfolioTitleInput}
-               onChange={(event) => setPortfolioTitleInput(event.target.value)}
-              />
-              <input
-               type="text"
-               placeholder="URLを貼ってください"
-               value={portfolioUrlInput}
-               onChange={(event) => setPortfolioUrlInput(event.target.value)}
+             <label className="form-label">
+               ポートフォリオ
+             </label>
+             <div className="profile-portfolio-inputs">
+               <input 
+                 className="form-input"
+                 type="text"
+                 placeholder="アプリ名を記載してください"
+                 value={portfolioTitleInput}
+                 onChange={(event) => setPortfolioTitleInput(event.target.value)}
                />
-              <button onClick={addPortfolio}>
-                追加
-              </button> 
+               <input
+                 className="form-input"
+                 type="text"
+                 placeholder="URLを貼ってください"
+                 value={portfolioUrlInput}
+                 onChange={(event) => setPortfolioUrlInput(event.target.value)}
+                />
+               <button
+                 className="secondary-button"
+                 onClick={addPortfolio}>
+                  追加
+               </button> 
+              </div>
               <ul>
                 {portfolios.map((portfolio, index) => (
                   <li key={index}>
@@ -414,23 +436,28 @@ function Profile( {user, setAppUsername } ) {
                   </li>
                 ))}        
               </ul>
-            <button
-              onClick={saveProfile}
-              disabled={isSaving}
-            >
-              {isSaving ? "保存中..." : "保存"}
-            </button>
-            {isSaving && (
-              <p role="status">保存中...</p>
-            )}
-            {!isSaving && saveErrorMessage && (
-              <p className="error" role="alert">
-                {saveErrorMessage}
-              </p>
-            )}
-            <button onClick={cancelEdit}>
-              キャンセル
-            </button>
+            <div className="profile-actions">
+              <button
+                className="primary-button"
+                onClick={saveProfile}
+                disabled={isSaving}
+              >
+                {isSaving ? "保存中..." : "保存"}
+              </button>
+              {isSaving && (
+                <p role="status">保存中...</p>
+              )}
+              {!isSaving && saveErrorMessage && (
+                <p className="error" role="alert">
+                  {saveErrorMessage}
+                </p>
+              )}
+              <button 
+                className="secondaru-button"
+                onClick={cancelEdit}>
+                キャンセル
+              </button>
+            </div>
           </div>
         ) : (
           <div>
