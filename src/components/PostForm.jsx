@@ -9,22 +9,29 @@ function PostForm({
     isPosting
 }) {
     return (
-        <form onSubmit={addPost}>
-        <p>学んだ用語</p>
-        <input type="text"
-             placeholder="学んだ用語を入力"
-             value={term}
-             onChange={(event) => setTerm(event.target.value)} 
+        <form className="post-form" onSubmit={addPost}>
+          <label className="form-label">
+            学んだ用語
+          </label>
+        <input 
+          className="form-input"
+          type="text"
+          placeholder="学んだ用語を入力"
+          value={term}
+          onChange={(event) => setTerm(event.target.value)} 
         />
-        <p>自分なりの理解</p>
+        <label className="form-label">
+          自分なりの理解
+        </label>
         <textarea 
-             placeholder="自分なりの理解を書いてみよう！"
-             value={explanation}
-             onChange={(event) => setExplanation(event.target.value)} 
+          className="form-textarea"
+          placeholder="自分なりの理解を書いてみよう！"
+          value={explanation}
+          onChange={(event) => setExplanation(event.target.value)} 
         />
         <button 
+          className={`primary-button ${isPosting ? "posting" : ""}`}
           type="submit"
-          className={isPosting ? "posting" : ""}
           disabled={
             term.trim() === "" || 
             explanation.trim() === "" ||

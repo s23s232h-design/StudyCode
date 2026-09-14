@@ -132,51 +132,56 @@ function PostPage({ posts, setPosts, likePost, user, isPostsLoading, postsError 
           messageType={messageType}
           isPosting={isPosting}
         />
+        <div className="search-controls">
+          <input 
+            className="form-input"
+            type="text"
+            placeholder="検索する言葉を入力"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
 
-        <input 
-          type="text"
-          placeholder="検索する言葉を入力"
-          value={searchTerm}
-          onChange={(event) => setSearchTerm(event.target.value)}
-        />
-
-        <select 
-          value={sortType}
-          onChange={(event) => setSortType(event.target.value)}
-        >
-        <option value="new">新着順</option>
-        <option value="likes">いいね順</option>
-        </select>
-        <label>
-          <input
-            type="radio"
-            name="searchTarget"
-            value="term"
-            checked={searchTarget === "term"}
-            onChange={(event) => setSearchTarget(event.target.value)}
-          />
-          用語
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="searchTarget"
-            value="explanation"
-            checked={searchTarget === "explanation"}
-            onChange={(event) => setSearchTarget(event.target.value)}
-          />
-          説明
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="searchTarget"
-            value="both"
-            checked={searchTarget === "both"}
-            onChange={(event) => setSearchTarget(event.target.value)}
-          />
-          用語または説明
-        </label>
+          <select 
+            className="form-select"
+            value={sortType}
+            onChange={(event) => setSortType(event.target.value)}
+          >
+          <option value="new">新着順</option>
+          <option value="likes">いいね順</option>
+          </select>
+          <div className="radio-group">
+            <label>
+              <input
+                type="radio"
+                name="searchTarget"
+                value="term"
+                checked={searchTarget === "term"}
+                onChange={(event) => setSearchTarget(event.target.value)}
+              />
+              用語
+              </label>
+            <label>
+              <input
+                type="radio"
+                name="searchTarget"
+                value="explanation"
+                checked={searchTarget === "explanation"}
+                onChange={(event) => setSearchTarget(event.target.value)}
+              />
+              説明
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="searchTarget"
+                value="both"
+                checked={searchTarget === "both"}
+                onChange={(event) => setSearchTarget(event.target.value)}
+              />
+              用語または説明
+            </label>
+          </div>
+        </div>
 
         {isPostsLoading ? (
           <p role="status">読み込み中...</p>

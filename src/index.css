@@ -289,3 +289,71 @@ nav a:hover {
 .post-actions button {
   transition: background-color 0.2s, border-color 0.2s;
 }
+
+.post-form,
+.search-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.form-label {
+  font-weight: bold;
+  color: var(--text-h);
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+  background-color: white;
+  color: #222;
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: 2px solid var(--accent-border);
+  border-color: var(--accent);
+}
+
+.primary-button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  background-color: var(--accent);
+  color: white;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.primary-button:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.radio-group {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}

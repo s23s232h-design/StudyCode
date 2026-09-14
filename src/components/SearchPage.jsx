@@ -29,9 +29,10 @@ function SearchPage({ posts, user, likePost, isPostsLoading, postsError }) {
     return new Date(b.created_at) - new Date(a.created_at);
   });
   return (
-    <div>
+    <div className="search-controls">
       <h2>投稿検索</h2>
       <input
+        className="form-input"
         type="text"
         value={searchWord}
         onChange={(event) =>
@@ -40,13 +41,14 @@ function SearchPage({ posts, user, likePost, isPostsLoading, postsError }) {
         placeholder="検索する言葉を入力"
       />
       <select 
+        className="form-select"
         value={sortType}
         onChange={(event) => setSortType(event.target.value)}
       >
         <option value="new">新着順</option>
         <option value="likes">いいね順</option>
       </select>
-      <div>
+      <div className="radio-group">
         <label>
           <input
             type="radio"
