@@ -453,7 +453,7 @@ function Profile( {user, setAppUsername } ) {
                 </p>
               )}
               <button 
-                className="secondaru-button"
+                className="secondary-button"
                 onClick={cancelEdit}>
                 キャンセル
               </button>
