@@ -263,4 +263,29 @@ nav a:hover {
   .post-card {
     padding: 16px;
   }
+
+  .post-header {
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .post-time {
+    flex-shrink: 0;
+  }
+
+  .post-actions {
+    flex-wrap: wrap;
+  }
+
+  .post-term {
+    font-size: 18px;
+  }
+}
+
+.post-username:hover {
+  text-decoration: underline;
+}
+
+.post-actions button {
+  transition: background-color 0.2s, border-color 0.2s;
 }
