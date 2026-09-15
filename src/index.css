@@ -657,3 +657,9 @@ nav a:hover {
     padding: 20px;
   }
 }
+
+.keyboard-hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #6b7280;
+}

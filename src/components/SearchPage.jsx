@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Post from "../components/Post.jsx";
+import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
 function SearchPage({ posts, user, likePost, isPostsLoading, postsError }) {
   const [searchWord, setSearchWord] = useState("");
@@ -29,7 +30,7 @@ function SearchPage({ posts, user, likePost, isPostsLoading, postsError }) {
     return new Date(b.created_at) - new Date(a.created_at);
   });
   return (
-    <div className="search-controls">
+    <div className="search-controls" onKeyDown={handleFormArrowNavigation}>
       <h2>投稿検索</h2>
       <input
         className="form-input"

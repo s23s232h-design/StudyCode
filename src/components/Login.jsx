@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
 function Login() {
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ function Login() {
     <div className="auth-page">
       <h3>新規登録 / ログイン</h3>
 
-      <form className="auth-form">
+      <form className="auth-form" onKeyDown={handleFormArrowNavigation}>
         <label className="form-label" htmlFor="email">
           メールアドレス
         </label>
@@ -117,6 +118,9 @@ function Login() {
             {isLoading ? "処理中..." : "ログイン"}
           </button>
         </div>
+        <p className="keyboard-hint">
+          Alt + ↑↓ で入力欄を移動できます
+        </p>
       </form>
 
       {message && (

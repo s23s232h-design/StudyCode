@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
 function ReplyForm({ onSubmitReply }) {
   const [content, setContent] = useState("");
@@ -16,7 +17,11 @@ function ReplyForm({ onSubmitReply }) {
   }
 
   return (
-    <form className="reply-form" onSubmit={handleSubmit}>
+    <form
+      className="reply-form"
+      onSubmit={handleSubmit}
+      onKeyDown={handleFormArrowNavigation}
+    >
       <textarea
         className="form-textarea"
         value={content}

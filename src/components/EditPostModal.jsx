@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabaseClient.js"
+import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
 function EditPostModal({
     postToEdit,
@@ -94,6 +95,7 @@ function EditPostModal({
       >
         <div
           className="edit-modal"
+          onKeyDown={handleFormArrowNavigation}
           role="dialog"
           aria-modal="true"
           aria-labelledby="edit-modal-title"

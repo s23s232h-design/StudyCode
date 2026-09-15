@@ -1,3 +1,5 @@
+import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
+
 function PostForm({
     term,
     setTerm,
@@ -9,7 +11,11 @@ function PostForm({
     isPosting
 }) {
     return (
-        <form className="post-form" onSubmit={addPost}>
+        <form
+          className="post-form"
+          onSubmit={addPost}
+          onKeyDown={handleFormArrowNavigation}
+        >
           <label className="form-label">
             学んだ用語
           </label>
@@ -39,6 +45,9 @@ function PostForm({
         >
           {isPosting ? "投稿中..." : "投稿する"}
         </button>
+        <p className="keyboard-hint">
+          Alt + ↑↓ で入力欄を移動できます
+        </p>
         {message && (
           <p className={messageType}>
             {message}</p>

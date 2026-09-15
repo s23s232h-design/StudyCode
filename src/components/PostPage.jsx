@@ -4,6 +4,7 @@ import PostForm from "./PostForm";
 import DeleteModal from "./DeleteModal.jsx";
 import EditPostModal from "./EditPostModal.jsx";
 import { supabase } from "../lib/supabaseClient.js";
+import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
 function PostPage({ posts, setPosts, likePost, user, isPostsLoading, postsError }){
   const [term, setTerm] = useState("");
@@ -132,7 +133,7 @@ function PostPage({ posts, setPosts, likePost, user, isPostsLoading, postsError 
           messageType={messageType}
           isPosting={isPosting}
         />
-        <div className="search-controls">
+        <div className="search-controls" onKeyDown={handleFormArrowNavigation}>
           <h3>過去の自分の投稿を検索</h3>
           <input 
             className="form-input"

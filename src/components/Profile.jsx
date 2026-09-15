@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
+import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
 function Profile( {user, setAppUsername } ) {
   const [username, setUsername] = useState("");
@@ -345,7 +346,7 @@ function Profile( {user, setAppUsername } ) {
       )}
       {!isLoading && (!errorMessage || isEditing) && (
         isEditing ? (
-          <div>
+          <div onKeyDown={handleFormArrowNavigation}>
             <label className="form-label">
               ユーザー名
             </label>
@@ -468,6 +469,9 @@ function Profile( {user, setAppUsername } ) {
                 キャンセル
               </button>
             </div>
+            <p className="keyboard-hint">
+              Alt + ↑↓ で入力欄を移動できます
+            </p>
           </div>
         ) : (
           <div className="profile-view">
