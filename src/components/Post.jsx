@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import RelativeTime from "../components/RelativeTime.jsx";
+import QuotedPostCard from "./QuotedPostCard.jsx";
 
 function Post({
   id, 
@@ -11,6 +12,8 @@ function Post({
   reposts,
   createdAt,
   editedAt,
+  quotedPost,
+  onQuote,
   likePost,
   repostPost,
   deletePost,
@@ -46,6 +49,7 @@ function Post({
       
       <h2 className="post-term">「{term}」</h2>
       <p className="post-explanation">{explanation}</p>
+      <QuotedPostCard quotedPost={quotedPost} />
       <div className="post-actions">
         <button
           className={isLiked ? "like-button liked" : "like-button"}
@@ -69,6 +73,15 @@ function Post({
           }}
         >
           {isReposted ? "↻ リポスト済み" : "↻ リポスト"} {reposts}
+        </button>
+        <button
+          className="quote-button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onQuote(id);
+          }}
+        >
+          引用
         </button>
         {deletePost && (
           <button

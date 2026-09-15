@@ -2,12 +2,12 @@ import { useState } from "react";
 import Post from "../components/Post.jsx";
 import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
-function SearchPage({ posts, user, likePost, repostPost, isPostsLoading, postsError }) {
+function SearchPage({ posts, user, likePost, repostPost, openQuoteModal, isPostsLoading, postsError }) {
   const [searchWord, setSearchWord] = useState("");
   const [searchTarget, setSearchTarget] = useState("both");
   const [sortType, setSortType] = useState("new");
   const filteredPosts = posts.filter((post) => {
-    if(searchWord.trim() === "") {
+    if(post.deleted_at || searchWord.trim() === "") {
         return false;
     }
     const keyword = searchWord.trim().toLowerCase();
@@ -107,6 +107,8 @@ function SearchPage({ posts, user, likePost, repostPost, isPostsLoading, postsEr
               reposts={post.reposts?.length ?? 0}
               createdAt={post.created_at}
               editedAt={post.edited_at}
+              quotedPost={post.quoted_post}
+              onQuote={openQuoteModal}
               likePost={likePost}
               repostPost={repostPost}
               isReposted={

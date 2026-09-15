@@ -81,6 +81,16 @@ function EditPostModal({
               edited_at: editedAt
             };
           }
+          if(post.quoted_post?.id === postToEdit.id && !post.quoted_post.deleted_at) {
+            return {
+              ...post,
+              quoted_post: {
+                ...post.quoted_post,
+                term: editTerm,
+                explanation: editExplanation
+              }
+            };
+          }
           return post;
         })
       );

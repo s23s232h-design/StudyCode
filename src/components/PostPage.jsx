@@ -6,7 +6,7 @@ import EditPostModal from "./EditPostModal.jsx";
 import { supabase } from "../lib/supabaseClient.js";
 import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
-function PostPage({ posts, setPosts, likePost, repostPost, user, isPostsLoading, postsError }){
+function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user, isPostsLoading, postsError }){
   const [term, setTerm] = useState("");
   const [explanation, setExplanation] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,7 +36,25 @@ function PostPage({ posts, setPosts, likePost, repostPost, user, isPostsLoading,
         term: term,
         explanation: explanation
       })
-      .select("*, profiles (username), likes (user_id)")
+      .select(`
+        *,
+        profiles (username),
+        likes (user_id),
+        reposts (
+          user_id,
+          created_at,
+          profiles (username)
+        ),
+        quoted_post:posts!posts_quoted_post_id_fkey (
+          id,
+          user_id,
+          term,
+          explanation,
+          created_at,
+          deleted_at,
+          profiles (username)
+        )
+      `)
       .single();
       if(error) {
         setMessage("投稿に失敗しました。もう一度お試しください。")
@@ -47,7 +65,7 @@ function PostPage({ posts, setPosts, likePost, repostPost, user, isPostsLoading,
       }, 3000);
         return;
       }
-      setPosts([data, ...posts]);
+      setPosts((currentPosts) => [data, ...currentPosts]);
       setTerm("");
       setExplanation("");
       setMessage("投稿しました");
@@ -60,9 +78,14 @@ function PostPage({ posts, setPosts, likePost, repostPost, user, isPostsLoading,
 
   async function handleDeletePost(id) {
     setIsDeleting(true);
+    const deletedAt = new Date().toISOString();
     const { error } = await supabase
       .from("posts")
-      .delete()
+      .update({
+        term: null,
+        explanation: null,
+        deleted_at: deletedAt
+      })
       .eq("id", id);
     if(error) {
       setIsDeleting(false);
@@ -73,10 +96,29 @@ function PostPage({ posts, setPosts, likePost, repostPost, user, isPostsLoading,
       }, 3000);
       return;
     }
-    const newPosts = posts.filter((post) => {
-      return post.id !== id;
-    });
-    setPosts(newPosts);
+    setPosts((currentPosts) => currentPosts.map((post) => {
+      let updatedPost = post;
+      if (post.id === id) {
+        updatedPost = {
+          ...updatedPost,
+          term: null,
+          explanation: null,
+          deleted_at: deletedAt
+        };
+      }
+      if (post.quoted_post?.id === id) {
+        updatedPost = {
+          ...updatedPost,
+          quoted_post: {
+            ...post.quoted_post,
+            term: null,
+            explanation: null,
+            deleted_at: deletedAt
+          }
+        };
+      }
+      return updatedPost;
+    }));
     setPostToDelete(null);
     setIsDeleting(false);
     setMessage("投稿を削除しました");
@@ -95,7 +137,7 @@ function PostPage({ posts, setPosts, likePost, repostPost, user, isPostsLoading,
     );
   }
   const myPosts = posts.filter(
-    (post) => post.user_id === user.id
+    (post) => post.user_id === user.id && !post.deleted_at
   );
   const filteredPosts = myPosts.filter((post) => {
     if(searchTerm.trim() === "") {
@@ -204,6 +246,8 @@ function PostPage({ posts, setPosts, likePost, repostPost, user, isPostsLoading,
               reposts={post.reposts?.length ?? 0}
               createdAt={post.created_at}
               editedAt={post.edited_at}
+              quotedPost={post.quoted_post}
+              onQuote={openQuoteModal}
               likePost={likePost}
               repostPost={repostPost}
               isReposted={

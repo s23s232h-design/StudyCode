@@ -3,12 +3,12 @@ import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import Post from "./Post";
 
-function UserProfile( { posts, likePost, repostPost, user, isPostsLoading, postsError }) {
+function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPostsLoading, postsError }) {
     const { userId } = useParams();
     const [username, setUsername] = useState("");
     const [introduction, setIntroduction] = useState("");
     const userPosts = posts.filter((post) => {
-        return post.user_id === userId;
+        return post.user_id === userId && !post.deleted_at;
     });
     const [materials, setMaterials] = useState([]);
     const [portfolios, setPortfolios] = useState([]);
@@ -150,6 +150,8 @@ function UserProfile( { posts, likePost, repostPost, user, isPostsLoading, posts
                   reposts={post.reposts?.length ?? 0}
                   createdAt={post.created_at}
                   editedAt={post.edited_at}
+                  quotedPost={post.quoted_post}
+                  onQuote={openQuoteModal}
                   likePost={likePost}
                   repostPost={repostPost}
                   isReposted={
@@ -158,7 +160,7 @@ function UserProfile( { posts, likePost, repostPost, user, isPostsLoading, posts
                           (repost) => repost.user_id === user.id
                         ) ?? false
                       : false
-                  }
+                  }                  
                   isLiked={
                     user
                       ? post.likes?.some(

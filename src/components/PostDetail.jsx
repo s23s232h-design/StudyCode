@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import Reply from "./Reply.jsx";
 import ReplyForm from "./ReplyForm.jsx";
+import QuotedPostCard from "./QuotedPostCard.jsx";
 
-function PostDetail({ user, posts, repostPost }) {
+function PostDetail({ user, posts, repostPost, openQuoteModal }) {
   const { postId } = useParams();
   const [replies, setReplies] = useState([]);
   const [post, setPost] = useState(null);
@@ -44,6 +45,15 @@ function PostDetail({ user, posts, repostPost }) {
               user_id,
               created_at,
               profiles (username)
+            ),
+            quoted_post:posts!posts_quoted_post_id_fkey (
+              id,
+              user_id,
+              term,
+              explanation,
+              created_at,
+              deleted_at,
+              profiles (username)
             )
           `)
           .eq("id", Number(postId))
@@ -70,19 +80,26 @@ function PostDetail({ user, posts, repostPost }) {
       return;
     }
 
-    // Mirror shared repost updates into the independently fetched detail record.
+    // Mirror reposts and deleted quote sources into the detail record.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPost((currentPost) => {
       if (
         currentPost?.id !== updatedPost.id ||
-        currentPost.reposts === updatedPost.reposts
+        (
+          currentPost.reposts === updatedPost.reposts &&
+          currentPost.quoted_post === updatedPost.quoted_post &&
+          currentPost.deleted_at === updatedPost.deleted_at
+        )
       ) {
         return currentPost;
       }
 
       return {
         ...currentPost,
-        reposts: updatedPost.reposts ?? []
+        reposts: updatedPost.reposts ?? [],
+        quoted_post: updatedPost.quoted_post ?? null,
+        deleted_at: updatedPost.deleted_at,
+        ...(updatedPost.deleted_at ? { term: null, explanation: null } : {})
       };
     });
   }, [posts, postId, post?.id]);
@@ -97,6 +114,10 @@ function PostDetail({ user, posts, repostPost }) {
 
   if (!post) {
     return <p>投稿が見つかりません。</p>;
+  }
+
+  if (post.deleted_at) {
+    return <p>この投稿は削除されました</p>;
   }
 
   const isReposted =
@@ -177,6 +198,7 @@ function PostDetail({ user, posts, repostPost }) {
         </div>
         <h2 className="post-term">「{post.term}」</h2>
         <p className="post-explanation">{post.explanation}</p>
+        <QuotedPostCard quotedPost={post.quoted_post} />
         <div className="post-detail-actions">
           <span>♡ {post.likes?.length ?? 0}</span>
           <button
@@ -191,6 +213,12 @@ function PostDetail({ user, posts, repostPost }) {
             {isReposted ? "↻ リポスト済み" : "↻ リポスト"}
             {" "}
             {post.reposts?.length ?? 0}
+          </button>
+          <button
+            className="quote-button"
+            onClick={() => openQuoteModal(post.id)}
+          >
+            引用
           </button>
         </div>
       </div>

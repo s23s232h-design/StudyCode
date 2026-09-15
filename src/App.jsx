@@ -9,6 +9,7 @@ import Login from "./components/Login.jsx";
 import UserProfile from "./components/UserProfile.jsx";
 import SearchPage from "./components/SearchPage.jsx";
 import PostDetail from "./components/PostDetail.jsx";
+import QuotePostModal from "./components/QuotePostModal.jsx";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -19,6 +20,7 @@ function App() {
   const [usernameError, setUsernameError] = useState("");
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authError, setAuthError] = useState("");
+  const [postToQuote, setPostToQuote] = useState(null);
 
   useEffect(() => {
     let ignore = false;
@@ -67,6 +69,15 @@ function App() {
             reposts (
               user_id,
               created_at,
+              profiles (username)
+            ),
+            quoted_post:posts!posts_quoted_post_id_fkey (
+              id,
+              user_id,
+              term,
+              explanation,
+              created_at,
+              deleted_at,
               profiles (username)
             )
           `)
@@ -131,7 +142,7 @@ function App() {
     const post = posts.find((post) => {
       return post.id === postId;
     });
-    if(!post) {
+    if(!post || post.deleted_at) {
       return;
     }
     const alreadyLiked = post.likes?.some((like) => {
@@ -147,7 +158,7 @@ function App() {
         console.log(error.message);
         return;
       }
-      const newPosts = posts.map((post) => {
+      setPosts((currentPosts) => currentPosts.map((post) => {
         if(post.id === postId) {
           return {
             ...post,
@@ -157,8 +168,7 @@ function App() {
           };
         }
         return post;
-      });
-      setPosts(newPosts);
+      }));
     } else {
       const { data, error } = await supabase
         .from("likes")
@@ -172,7 +182,7 @@ function App() {
           console.log(error.message);
           return;
         }
-        const newPosts = posts.map((post) => {
+        setPosts((currentPosts) => currentPosts.map((post) => {
           if(post.id === postId) {
             return {
               ...post,
@@ -184,8 +194,7 @@ function App() {
             };
           }
           return post;
-        });
-      setPosts(newPosts);
+        }));
     }
   }
   async function repostPost(postId) {
@@ -196,7 +205,7 @@ function App() {
     const post = posts.find((post) => {
       return post.id === postId;
     });
-    if(!post) {
+    if(!post || post.deleted_at) {
       return;
     }
     const alreadyReposted = post.reposts?.some((repost) => {
@@ -254,6 +263,18 @@ function App() {
       );
     }
   }
+  function openQuoteModal(postId) {
+    if (!user) {
+      alert("引用するにはログインしてください");
+      return;
+    }
+    const targetPost = posts.find((post) => post.id === postId);
+    if (!targetPost || targetPost.deleted_at) {
+      return;
+    }
+    setPostToQuote(targetPost);
+  }
+
   if(isAuthLoading) {
     return <p role="status">読み込み中...</p>
   }
@@ -335,6 +356,7 @@ function App() {
               postsError={postsError}
               likePost={likePost}
               repostPost={repostPost}
+              openQuoteModal={openQuoteModal}
               user={user}
             />
           }
@@ -349,6 +371,7 @@ function App() {
               user={user}
               likePost={likePost}
               repostPost={repostPost}
+              openQuoteModal={openQuoteModal}
             />
           } 
         />
@@ -362,6 +385,7 @@ function App() {
               setPosts={setPosts}
               likePost={likePost}
               repostPost={repostPost}
+              openQuoteModal={openQuoteModal}
               user={user}
             />
           }
@@ -392,6 +416,7 @@ function App() {
               postsError={postsError}
               likePost={likePost}
               repostPost={repostPost}
+              openQuoteModal={openQuoteModal}
               user={user}
              />
           }
@@ -403,10 +428,19 @@ function App() {
               user={user}
               posts={posts}
               repostPost={repostPost}
+              openQuoteModal={openQuoteModal}
              />
           } 
         />
       </Routes>
+      {postToQuote && (
+        <QuotePostModal
+          quotedPost={posts.find((post) => post.id === postToQuote.id) ?? postToQuote}
+          user={user}
+          setPosts={setPosts}
+          onClose={() => setPostToQuote(null)}
+        />
+      )}
     </div>
   )
 }

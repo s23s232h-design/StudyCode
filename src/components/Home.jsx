@@ -1,8 +1,11 @@
 import Post from "./Post";
-function Home({ posts, likePost, repostPost, user, isPostsLoading, postsError }) {
+function Home({ posts, likePost, repostPost, openQuoteModal, user, isPostsLoading, postsError }) {
     const timelineEvents = [];
 
     posts.forEach((post) => {
+      if (post.deleted_at) {
+        return;
+      }
       timelineEvents.push({
         type: "post",
         eventTime: post.created_at,
@@ -53,6 +56,8 @@ function Home({ posts, likePost, repostPost, user, isPostsLoading, postsError })
                     reposts={post.reposts?.length ?? 0}
                     createdAt={post.created_at}
                     editedAt={post.edited_at}
+                    quotedPost={post.quoted_post}
+                    onQuote={openQuoteModal}
                     likePost={likePost}
                     repostPost={repostPost}
                     isReposted={
