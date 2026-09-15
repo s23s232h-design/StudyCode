@@ -44,15 +44,6 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
           user_id,
           created_at,
           profiles (username)
-        ),
-        quoted_post:posts!posts_quoted_post_id_fkey (
-          id,
-          user_id,
-          term,
-          explanation,
-          created_at,
-          deleted_at,
-          profiles (username)
         )
       `)
       .single();
@@ -65,7 +56,11 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
       }, 3000);
         return;
       }
-      setPosts((currentPosts) => [data, ...currentPosts]);
+      const newPost = {
+        ...data,
+        quoted_post: null
+      };
+      setPosts((currentPosts) => [newPost, ...currentPosts]);
       setTerm("");
       setExplanation("");
       setMessage("投稿しました");

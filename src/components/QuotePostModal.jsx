@@ -96,22 +96,17 @@ function QuotePostModal({ quotedPost, user, setPosts, onClose }) {
             user_id,
             created_at,
             profiles (username)
-          ),
-          quoted_post:posts!posts_quoted_post_id_fkey (
-            id,
-            user_id,
-            term,
-            explanation,
-            created_at,
-            deleted_at,
-            profiles (username)
           )
         `)
         .single();
       if (error) {
         throw error;
       }
-      setPosts((currentPosts) => [data, ...currentPosts]);
+      const newPost = {
+        ...data,
+        quoted_post: quotedPost
+      };
+      setPosts((currentPosts) => [newPost, ...currentPosts]);
       onClose();
     } catch (error) {
       console.log(error.message);

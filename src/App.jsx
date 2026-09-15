@@ -60,7 +60,7 @@ function App() {
     async function loadPosts() {
       setIsPostsLoading(true);
       try {
-        const { data, error } = await supabase
+        const { data: postsData, error: postsError } = await supabase
           .from("posts")
           .select(`
             *,
@@ -70,8 +70,22 @@ function App() {
               user_id,
               created_at,
               profiles (username)
-            ),
-            quoted_post:posts!posts_quoted_post_id_fkey (
+            )
+          `)
+          .order("created_at", {ascending: false});
+        if(postsError) {
+          throw postsError;
+        }
+        const quotedPostIds = [...new Set(
+          (postsData ?? [])
+            .map((post) => post.quoted_post_id)
+            .filter((id) => id !== null && id !== undefined)
+        )];
+        let quotedPosts = [];
+        if (quotedPostIds.length > 0) {
+          const { data: quotedPostsData, error: quotedPostsError } = await supabase
+            .from("posts")
+            .select(`
               id,
               user_id,
               term,
@@ -79,14 +93,22 @@ function App() {
               created_at,
               deleted_at,
               profiles (username)
-            )
-          `)
-          .order("created_at", {ascending: false});
-        if(error) {
-          throw error;
+            `)
+            .in("id", quotedPostIds);
+          if (quotedPostsError) {
+            throw quotedPostsError;
+          }
+          quotedPosts = quotedPostsData ?? [];
         }
+        const quotedPostMap = new Map(
+          quotedPosts.map((quotedPost) => [quotedPost.id, quotedPost])
+        );
+        const postsWithQuotedPosts = (postsData ?? []).map((post) => ({
+          ...post,
+          quoted_post: quotedPostMap.get(post.quoted_post_id) ?? null
+        }));
         if (!ignore) {
-          setPosts(data ?? []);
+          setPosts(postsWithQuotedPosts);
           setPostsError("");
         }
       } catch (error) {

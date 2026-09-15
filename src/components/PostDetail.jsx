@@ -34,7 +34,10 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
   }, [postId]);
   
   useEffect(() => {
+    let ignore = false;
     async function loadPost() {
+      setIsLoadingPost(true);
+      try {
         const { data, error } = await supabase
           .from("posts")
           .select(`
@@ -45,8 +48,18 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
               user_id,
               created_at,
               profiles (username)
-            ),
-            quoted_post:posts!posts_quoted_post_id_fkey (
+            )
+          `)
+          .eq("id", Number(postId))
+          .single();
+        if(error) {
+          throw error;
+        }
+        let quotedPost = null;
+        if (data.quoted_post_id !== null && data.quoted_post_id !== undefined) {
+          const { data: quotedPostData, error: quotedPostError } = await supabase
+            .from("posts")
+            .select(`
               id,
               user_id,
               term,
@@ -54,21 +67,33 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
               created_at,
               deleted_at,
               profiles (username)
-            )
-          `)
-          .eq("id", Number(postId))
-          .single();
-        if(error) {
-            console.log(error.message);
-            setPostError("投稿の読み込みに失敗しました")
-            setIsLoadingPost(false);
-            return;
+            `)
+            .eq("id", data.quoted_post_id)
+            .maybeSingle();
+          if (quotedPostError) {
+            throw quotedPostError;
+          }
+          quotedPost = quotedPostData ?? null;
         }
-        setPostError("");
-        setPost(data);
-        setIsLoadingPost(false);
+        if (!ignore) {
+          setPostError("");
+          setPost({ ...data, quoted_post: quotedPost });
+        }
+      } catch (error) {
+        if (!ignore) {
+          console.log(error.message);
+          setPostError("投稿の読み込みに失敗しました");
+        }
+      } finally {
+        if (!ignore) {
+          setIsLoadingPost(false);
+        }
+      }
     }
     loadPost();
+    return () => {
+      ignore = true;
+    };
   }, [postId]);
 
   useEffect(() => {
