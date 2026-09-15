@@ -102,33 +102,45 @@ function EditPostModal({
           <h3 id="edit-modal-title">
             投稿を編集
           </h3>
-          <p>用語</p>
+          <label className="form-label" htmlFor="edit-term">
+            用語
+          </label>
           <input
             ref={termInputRef}
+            id="edit-term"
+            className="form-input"
             type="text"
             value={editTerm}
             onChange={(event) => setEditTerm(event.target.value)}
           />
-          <p>説明</p>
+          <label className="form-label" htmlFor="edit-explanation">
+            説明
+          </label>
           <textarea
             ref={explanationRef}
+            id="edit-explanation"
+            className="form-textarea"
             value={editExplanation}
             onChange={(event) => setEditExplanation(event.target.value)}
           />
-          <button
-            ref={saveButtonRef}
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            {isSaving ? "保存中..." : "保存する" }
-          </button>
-          <button
-            ref={cancelButtonRef}
-            onClick={() => setPostToEdit(null)}
-            disabled={isSaving}
-          >
-            キャンセル
-          </button>
+          <div className="modal-actions">
+            <button
+              ref={saveButtonRef}
+              className="primary-button"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? "保存中..." : "保存する" }
+            </button>
+            <button
+              ref={cancelButtonRef}
+              className="secondary-button"
+              onClick={() => setPostToEdit(null)}
+              disabled={isSaving}
+            >
+              キャンセル
+            </button>
+          </div>
         </div>
       </div>
     )
