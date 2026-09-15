@@ -117,44 +117,50 @@ function PostDetail({ user }) {
   }
 
   return (
-    <div>
-      <p>
-        <Link to={`/users/${post.user_id}`}>
-          {post.profiles?.username}
-        </Link>
-      </p>
-      <p>{formatDateTime(post.created_at)}</p>
-      <h2>「{post.term}」</h2>
-      <p>{post.explanation}</p>
-      <p>♡ {post.likes?.length ?? 0}</p>
-      <h3>返信</h3>
-      {replyError && (
-        <p>{replyError}</p>
-      )}
-      {user && (
-        <ReplyForm onSubmitReply={addReply} />
-      )}
-      {replyActionError && (
-          <p>{replyActionError}</p>
+    <div className="post-detail">
+      <div className="post-detail-card">
+        <div className="post-detail-header">
+          <Link className="post-username" to={`/users/${post.user_id}`}>
+            {post.profiles?.username}
+          </Link>
+          <span className="post-time">{formatDateTime(post.created_at)}</span>
+        </div>
+        <h2 className="post-term">「{post.term}」</h2>
+        <p className="post-explanation">{post.explanation}</p>
+        <p className="post-detail-likes">♡ {post.likes?.length ?? 0}</p>
+      </div>
+      <section className="reply-section">
+        <h3>返信</h3>
+        {replyError && (
+          <p className="error">{replyError}</p>
         )}
-      {replyError ? null : (
-        replies.length === 0 ? (
-          <p>まだ返信はありません</p>
-        ) : (
-          replies.map((reply) => (
-            <Reply
-              key={reply.id}
-              userId={reply.user_id}
-              username={reply.profiles?.username}
-              content={reply.content}
-              createdAt={reply.created_at}
-              canDelete={user && reply.user_id === user.id}
-              onDelete={() => deleteReply(reply.id)}
-              deleteReplyError={deleteReplyError}
-            />
-          ))
-        )
-      )}
+        {user && (
+          <ReplyForm onSubmitReply={addReply} />
+        )}
+        {replyActionError && (
+          <p className="error">{replyActionError}</p>
+        )}
+        <div className="reply-list">
+          {replyError ? null : (
+            replies.length === 0 ? (
+              <p>まだ返信はありません</p>
+            ) : (
+              replies.map((reply) => (
+                <Reply
+                  key={reply.id}
+                  userId={reply.user_id}
+                  username={reply.profiles?.username}
+                  content={reply.content}
+                  createdAt={reply.created_at}
+                  canDelete={user && reply.user_id === user.id}
+                  onDelete={() => deleteReply(reply.id)}
+                  deleteReplyError={deleteReplyError}
+                />
+              ))
+            )
+          )}
+        </div>
+      </section>
     </div>
   );
 }

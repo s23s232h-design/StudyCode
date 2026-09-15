@@ -488,3 +488,84 @@ nav a:hover {
     align-items: flex-start;
   }
 }
+
+.auth-page,
+.post-detail,
+.reply-section {
+  text-align: left;
+}
+
+.auth-form,
+.reply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.auth-message {
+  margin-top: 16px;
+}
+
+.post-detail-card {
+  background-color: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.post-detail-header,
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.post-detail-likes {
+  margin-top: 12px;
+}
+
+.reply-section {
+  margin-top: 24px;
+}
+
+.reply-form {
+  margin-bottom: 24px;
+}
+
+.reply-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reply-card {
+  background-color: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.reply-content {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .post-detail-card {
+    padding: 16px;
+  }
+
+  .post-detail-header,
+  .reply-header {
+    align-items: flex-start;
+  }
+}

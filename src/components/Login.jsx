@@ -33,7 +33,7 @@ function Login() {
       return;
     }
     setIsLoading(true);
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: email,
       password: password
     });
@@ -71,42 +71,56 @@ function Login() {
   }
 
   return (
-    <div>
-      <h3>新規登録</h3>
+    <div className="auth-page">
+      <h3>新規登録 / ログイン</h3>
 
-      <form>
+      <form className="auth-form">
+        <label className="form-label" htmlFor="email">
+          メールアドレス
+        </label>
         <input
+          id="email"
+          className="form-input"
           type="email"
           placeholder="メールアドレス"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         />
 
+        <label className="form-label" htmlFor="password">
+          パスワード
+        </label>
         <input
+          id="password"
+          className="form-input"
           type="password"
           placeholder="パスワード"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
 
-        <button
-          type="button" 
-          onClick={signUp}
-          disabled={isLoading}
-        >
-          {isLoading ? "処理中..." : "新規登録"}
-        </button>
-        <button
-          type="button" 
-          onClick={signIn}
-          disabled={isLoading}
-        >
-          {isLoading ? "処理中..." : "ログイン"}
-        </button>
+        <div className="auth-actions">
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={signUp}
+            disabled={isLoading}
+          >
+            {isLoading ? "処理中..." : "新規登録"}
+          </button>
+          <button
+            className="primary-button"
+            type="button"
+            onClick={signIn}
+            disabled={isLoading}
+          >
+            {isLoading ? "処理中..." : "ログイン"}
+          </button>
+        </div>
       </form>
 
       {message && (
-        <p>{message}</p>
+        <p className="auth-message">{message}</p>
       )}
     </div>
   );

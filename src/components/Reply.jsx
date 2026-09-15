@@ -11,21 +11,23 @@ function Reply({
   deleteReplyError
 }) {
   return (
-    <div>
-      <p>
-        <Link to={`/users/${userId}`}>
+    <div className="reply-card">
+      <div className="reply-header">
+        <Link className="post-username" to={`/users/${userId}`}>
           {username}
         </Link>
-      </p>
-      <RelativeTime createdAt={createdAt} />
-      <p>{content}</p>
+        <span className="post-time">
+          <RelativeTime createdAt={createdAt} />
+        </span>
+      </div>
+      <p className="reply-content">{content}</p>
       {canDelete && (
-        <button onClick={onDelete}>
+        <button className="danger-button small-button" onClick={onDelete}>
           削除
         </button>
       )}
       {deleteReplyError && (
-        <p>{deleteReplyError}</p>
+        <p className="error">{deleteReplyError}</p>
       )}
     </div>
   );

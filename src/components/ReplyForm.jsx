@@ -16,8 +16,9 @@ function ReplyForm({ onSubmitReply }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="reply-form" onSubmit={handleSubmit}>
       <textarea
+        className="form-textarea"
         value={content}
         onChange={(event) =>
           setContent(event.target.value)
@@ -25,7 +26,7 @@ function ReplyForm({ onSubmitReply }) {
         placeholder="返信を入力"
       />
 
-      <button type="submit">
+      <button className="primary-button" type="submit">
         返信
       </button>
     </form>
