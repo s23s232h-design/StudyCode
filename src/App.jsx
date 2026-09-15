@@ -60,7 +60,16 @@ function App() {
       try {
         const { data, error } = await supabase
           .from("posts")
-          .select("*, profiles (username), likes (user_id), reposts (user_id)")
+          .select(`
+            *,
+            profiles (username),
+            likes (user_id),
+            reposts (
+              user_id,
+              created_at,
+              profiles (username)
+            )
+          `)
           .order("created_at", {ascending: false});
         if(error) {
           throw error;
@@ -223,7 +232,7 @@ function App() {
           user_id: user.id,
           post_id: postId
         })
-        .select("user_id")
+        .select("user_id, created_at, profiles (username)")
         .single();
       if(error) {
         console.log(error.message);

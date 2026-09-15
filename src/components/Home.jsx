@@ -1,7 +1,26 @@
 import Post from "./Post";
 function Home({ posts, likePost, repostPost, user, isPostsLoading, postsError }) {
-    const timelinePosts = [...posts]
-      .sort((a, b) => b.id - a.id)
+    const timelineEvents = [];
+
+    posts.forEach((post) => {
+      timelineEvents.push({
+        type: "post",
+        eventTime: post.created_at,
+        post
+      });
+
+      (post.reposts ?? []).forEach((repost) => {
+        timelineEvents.push({
+          type: "repost",
+          eventTime: repost.created_at,
+          post,
+          repost
+        });
+      });
+    });
+
+    const sortedTimelineEvents = timelineEvents
+      .sort((a, b) => new Date(b.eventTime) - new Date(a.eventTime))
       .slice(0, 10);
     return (
         <div>
@@ -17,37 +36,56 @@ function Home({ posts, likePost, repostPost, user, isPostsLoading, postsError })
                 <p role="status">読み込み中...</p>
             ) : postsError ? (
                 <p className="error" role="alert">{postsError}</p>
-            ) : timelinePosts.length === 0 ? (
+            ) : sortedTimelineEvents.length === 0 ? (
                 <p>まだ投稿がありません</p>
             ) : (
-              timelinePosts.map((post) => (
-                <Post
-                  key={post.id}
-                  id={post.id}
-                  userId={post.user_id}
-                  username={post.profiles?.username || "ユーザー"}
-                  term={post.term}
-                  explanation={post.explanation}
-                  likes={post.likes?.length ?? 0}
-                  reposts={post.reposts?.length ?? 0}
-                  createdAt={post.created_at}
-                  editedAt={post.edited_at}
-                  likePost={likePost}
-                  repostPost={repostPost}
-                  isReposted={
-                    user
-                      ? post.reposts?.some(
-                          (repost) => repost.user_id === user.id
-                        ) ?? false
-                      : false
-                  }
-                  isLiked={
-                    user
-                      ? post.likes?.some((like) => like.user_id === user.id) ?? false
-                      : false
-                  }
-                />
-              ))
+              sortedTimelineEvents.map((event) => {
+                const { post } = event;
+                const postCard = (
+                  <Post
+                    key={`post-${post.id}`}
+                    id={post.id}
+                    userId={post.user_id}
+                    username={post.profiles?.username || "ユーザー"}
+                    term={post.term}
+                    explanation={post.explanation}
+                    likes={post.likes?.length ?? 0}
+                    reposts={post.reposts?.length ?? 0}
+                    createdAt={post.created_at}
+                    editedAt={post.edited_at}
+                    likePost={likePost}
+                    repostPost={repostPost}
+                    isReposted={
+                      user
+                        ? post.reposts?.some(
+                            (repost) => repost.user_id === user.id
+                          ) ?? false
+                        : false
+                    }
+                    isLiked={
+                      user
+                        ? post.likes?.some((like) => like.user_id === user.id) ?? false
+                        : false
+                    }
+                  />
+                );
+
+                if (event.type === "repost") {
+                  return (
+                    <div
+                      className="repost-event"
+                      key={`repost-${post.id}-${event.repost.user_id}`}
+                    >
+                      <span className="repost-event-label">
+                        ↻ {event.repost.profiles?.username || "ユーザー"}さんがリポストしました
+                      </span>
+                      {postCard}
+                    </div>
+                  );
+                }
+
+                return postCard;
+              })
             )}
         </div>
     );

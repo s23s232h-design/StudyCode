@@ -672,3 +672,20 @@ nav a:hover {
   color: #6b7280;
   font-size: inherit;
 }
+
+.repost-event {
+  margin-bottom: 16px;
+}
+
+.repost-event .post-card {
+  margin-bottom: 0;
+}
+
+.repost-event-label {
+  display: block;
+  margin: 0 0 6px 12px;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 600;
+  text-align: left;
+}
