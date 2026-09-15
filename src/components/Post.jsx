@@ -8,12 +8,15 @@ function Post({
   term,
   explanation, 
   likes, 
+  reposts,
   createdAt,
   editedAt,
   likePost,
+  repostPost,
   deletePost,
   canEdit,
   isLiked,
+  isReposted,
   setPostToDelete,
   setPostToEdit
 }) {
@@ -52,6 +55,20 @@ function Post({
           }}
         >
           {isLiked ? "♥" : "♡"} {likes}
+        </button>
+        <button
+          className={
+            isReposted
+              ? "repost-button reposted"
+              : "repost-button"
+          }
+          aria-pressed={isReposted}
+          onClick={(event) => {
+            event.stopPropagation();
+            repostPost(id);
+          }}
+        >
+          {isReposted ? "↻ リポスト済み" : "↻ リポスト"} {reposts}
         </button>
         {deletePost && (
           <button

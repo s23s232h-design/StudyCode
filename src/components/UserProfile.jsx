@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import Post from "./Post";
 
-function UserProfile( { posts, likePost, user, isPostsLoading, postsError }) {
+function UserProfile( { posts, likePost, repostPost, user, isPostsLoading, postsError }) {
     const { userId } = useParams();
     const [username, setUsername] = useState("");
     const [introduction, setIntroduction] = useState("");
@@ -147,8 +147,18 @@ function UserProfile( { posts, likePost, user, isPostsLoading, postsError }) {
                   term={post.term}
                   explanation={post.explanation}
                   likes={post.likes?.length ?? 0}
+                  reposts={post.reposts?.length ?? 0}
                   createdAt={post.created_at}
+                  editedAt={post.edited_at}
                   likePost={likePost}
+                  repostPost={repostPost}
+                  isReposted={
+                    user
+                      ? post.reposts?.some(
+                          (repost) => repost.user_id === user.id
+                        ) ?? false
+                      : false
+                  }
                   isLiked={
                     user
                       ? post.likes?.some(

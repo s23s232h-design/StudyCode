@@ -60,7 +60,7 @@ function App() {
       try {
         const { data, error } = await supabase
           .from("posts")
-          .select("*, profiles (username), likes (user_id)")
+          .select("*, profiles (username), likes (user_id), reposts (user_id)")
           .order("created_at", {ascending: false});
         if(error) {
           throw error;
@@ -179,6 +179,72 @@ function App() {
       setPosts(newPosts);
     }
   }
+  async function repostPost(postId) {
+    if(!user) {
+      alert("リポストするにはログインしてください");
+      return;
+    }
+    const post = posts.find((post) => {
+      return post.id === postId;
+    });
+    if(!post) {
+      return;
+    }
+    const alreadyReposted = post.reposts?.some((repost) => {
+      return repost.user_id === user.id;
+    });
+    if(alreadyReposted) {
+      const { error } = await supabase
+        .from("reposts")
+        .delete()
+        .eq("post_id", postId)
+        .eq("user_id", user.id);
+      if(error) {
+        console.log(error.message);
+        return;
+      }
+      setPosts((currentPosts) =>
+        currentPosts.map((post) => {
+          if(post.id === postId) {
+            return {
+              ...post,
+              reposts: (post.reposts ?? []).filter((repost) => {
+                return repost.user_id !== user.id;
+              })
+            };
+          }
+          return post;
+        })
+      );
+    } else {
+      const { data, error } = await supabase
+        .from("reposts")
+        .insert({
+          user_id: user.id,
+          post_id: postId
+        })
+        .select("user_id")
+        .single();
+      if(error) {
+        console.log(error.message);
+        return;
+      }
+      setPosts((currentPosts) =>
+        currentPosts.map((post) => {
+          if(post.id === postId) {
+            return {
+              ...post,
+              reposts: [
+                ...(post.reposts ?? []),
+                data
+              ]
+            };
+          }
+          return post;
+        })
+      );
+    }
+  }
   if(isAuthLoading) {
     return <p role="status">読み込み中...</p>
   }
@@ -259,6 +325,7 @@ function App() {
               isPostsLoading={isPostsLoading}
               postsError={postsError}
               likePost={likePost}
+              repostPost={repostPost}
               user={user}
             />
           }
@@ -271,7 +338,8 @@ function App() {
               isPostsLoading={isPostsLoading}
               postsError={postsError}
               user={user}
-              likePost={likePost} 
+              likePost={likePost}
+              repostPost={repostPost}
             />
           } 
         />
@@ -284,6 +352,7 @@ function App() {
               postsError={postsError}
               setPosts={setPosts}
               likePost={likePost}
+              repostPost={repostPost}
               user={user}
             />
           }
@@ -313,6 +382,7 @@ function App() {
               isPostsLoading={isPostsLoading}
               postsError={postsError}
               likePost={likePost}
+              repostPost={repostPost}
               user={user}
              />
           }

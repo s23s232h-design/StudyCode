@@ -6,7 +6,7 @@ import EditPostModal from "./EditPostModal.jsx";
 import { supabase } from "../lib/supabaseClient.js";
 import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
-function PostPage({ posts, setPosts, likePost, user, isPostsLoading, postsError }){
+function PostPage({ posts, setPosts, likePost, repostPost, user, isPostsLoading, postsError }){
   const [term, setTerm] = useState("");
   const [explanation, setExplanation] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -201,9 +201,18 @@ function PostPage({ posts, setPosts, likePost, user, isPostsLoading, postsError 
               term={post.term}
               explanation={post.explanation}
               likes={post.likes?.length ?? 0}
+              reposts={post.reposts?.length ?? 0}
               createdAt={post.created_at}
               editedAt={post.edited_at}
               likePost={likePost}
+              repostPost={repostPost}
+              isReposted={
+                user
+                  ? post.reposts?.some(
+                      (repost) => repost.user_id === user.id
+                    ) ?? false
+                  : false
+              }
               deletePost={
                 user && post.user_id === user.id
                   ? handleDeletePost

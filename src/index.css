@@ -254,6 +254,10 @@ nav a:hover {
   color: #e0245e;
 }
 
+.repost-button.reposted {
+  color: #16a34a;
+}
+
 .edit-button {
   color: #374151;
 }

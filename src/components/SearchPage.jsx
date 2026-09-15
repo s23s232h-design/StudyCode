@@ -2,7 +2,7 @@ import { useState } from "react";
 import Post from "../components/Post.jsx";
 import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 
-function SearchPage({ posts, user, likePost, isPostsLoading, postsError }) {
+function SearchPage({ posts, user, likePost, repostPost, isPostsLoading, postsError }) {
   const [searchWord, setSearchWord] = useState("");
   const [searchTarget, setSearchTarget] = useState("both");
   const [sortType, setSortType] = useState("new");
@@ -104,9 +104,18 @@ function SearchPage({ posts, user, likePost, isPostsLoading, postsError }) {
               term={post.term}
               explanation={post.explanation}
               likes={post.likes?.length ?? 0}
+              reposts={post.reposts?.length ?? 0}
               createdAt={post.created_at}
               editedAt={post.edited_at}
               likePost={likePost}
+              repostPost={repostPost}
+              isReposted={
+                user
+                  ? post.reposts?.some(
+                      (repost) => repost.user_id === user.id
+                    ) ?? false
+                  : false
+              }
               isLiked={
                 user
                   ? post.likes?.some(
