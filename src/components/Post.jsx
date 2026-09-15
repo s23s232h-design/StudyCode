@@ -9,6 +9,7 @@ function Post({
   explanation, 
   likes, 
   createdAt,
+  editedAt,
   likePost,
   deletePost,
   canEdit,
@@ -32,6 +33,11 @@ function Post({
         </Link>
         <div className="post-time">
           <RelativeTime createdAt={createdAt} />
+          {editedAt && (
+            <span className="edited-label">
+              ・ 編集済み
+            </span>
+          )}
         </div>
       </div>
       

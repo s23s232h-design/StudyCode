@@ -30,6 +30,7 @@ function Home({ posts, likePost, user, isPostsLoading, postsError }) {
                   explanation={post.explanation}
                   likes={post.likes?.length ?? 0}
                   createdAt={post.created_at}
+                  editedAt={post.edited_at}
                   likePost={likePost}
                   isLiked={
                     user

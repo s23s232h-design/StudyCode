@@ -202,6 +202,7 @@ function PostPage({ posts, setPosts, likePost, user, isPostsLoading, postsError 
               explanation={post.explanation}
               likes={post.likes?.length ?? 0}
               createdAt={post.created_at}
+              editedAt={post.edited_at}
               likePost={likePost}
               deletePost={
                 user && post.user_id === user.id

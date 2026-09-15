@@ -663,3 +663,8 @@ nav a:hover {
   font-size: 13px;
   color: #6b7280;
 }
+
+.edited-label {
+  color: #6b7280;
+  font-size: inherit;
+}

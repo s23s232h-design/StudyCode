@@ -123,7 +123,14 @@ function PostDetail({ user }) {
           <Link className="post-username" to={`/users/${post.user_id}`}>
             {post.profiles?.username}
           </Link>
-          <span className="post-time">{formatDateTime(post.created_at)}</span>
+          <span className="post-time">
+            {formatDateTime(post.created_at)}
+            {post.edited_at && (
+              <span className="edited-label">
+                ・ 編集済み
+              </span>
+            )}
+          </span>
         </div>
         <h2 className="post-term">「{post.term}」</h2>
         <p className="post-explanation">{post.explanation}</p>

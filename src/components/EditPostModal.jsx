@@ -58,11 +58,13 @@ function EditPostModal({
         return;
       }
       setIsSaving(true);
+      const editedAt = new Date().toISOString();
       const { error } = await supabase
         .from("posts")
         .update({
           term: editTerm,
-          explanation: editExplanation
+          explanation: editExplanation,
+          edited_at: editedAt
         })
         .eq("id", postToEdit.id);
       if(error) {
@@ -75,7 +77,8 @@ function EditPostModal({
             return {
               ...post,
               term: editTerm,
-              explanation: editExplanation
+              explanation: editExplanation,
+              edited_at: editedAt
             };
           }
           return post;
