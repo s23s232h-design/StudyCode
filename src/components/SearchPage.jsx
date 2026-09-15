@@ -38,7 +38,7 @@ function SearchPage({ posts, user, likePost, isPostsLoading, postsError }) {
         onChange={(event) =>
           setSearchWord(event.target.value)
         }
-        placeholder="検索する言葉を入力"
+        placeholder="🔍検索"
       />
       <select 
         className="form-select"

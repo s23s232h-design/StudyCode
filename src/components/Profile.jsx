@@ -460,20 +460,32 @@ function Profile( {user, setAppUsername } ) {
             </div>
           </div>
         ) : (
-          <div>
-            <p>ユーザー名：{username}</p>
-            <p>自己紹介：{introduction}</p>
-            <p>累計学習時間：{totalHours}時間{totalMinutes}分</p>
-            <p>使用している教材</p>
-            <ul>
-               {materials.map((material, index) => (
-                 <li key={index}>
-                   {material.name}
-                 </li>
-               ))}
-             </ul>
-             <p>ポートフォリオ</p>
-             <ul>
+          <div className="profile-view">
+            <div className="profile-section">
+              <p className="profile-label">ユーザー名</p>
+              <p className="profile-value">{username}</p>
+          </div>
+            <div className="profile-section">
+              <p className="profile-label">自己紹介</p>
+              <p className="profile-value">{introduction}</p>
+            </div>
+            <div className="profile-section">
+              <p className="profile-label">累計学習時間</p>
+              <p className="profile-value">{totalHours}時間{totalMinutes}分</p>
+            </div>
+            <div className="profile-section">
+              <p className="profile-label">使用している教材</p>
+              <ul className="profile-list">
+                {materials.map((material, index) => (
+                  <li key={index}>
+                    {material.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="profile-section">
+              <p className="profile-label">ポートフォリオ</p>
+              <ul className="profile-list">
                 {portfolios.map((portfolio, index) => (
                   <li key={index}>
                     {portfolio.title} :{" "}
@@ -486,8 +498,12 @@ function Profile( {user, setAppUsername } ) {
                     </a>
                   </li>
                 ))}
-             </ul>
-            <button onClick={() => setIsEditing(true)}>
+              </ul>
+            </div>
+            <button 
+              className="primary-button"
+              onClick={() => setIsEditing(true)}
+            >
               編集
             </button>
           </div>
