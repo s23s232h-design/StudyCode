@@ -380,19 +380,24 @@ function Profile( {user, setAppUsername } ) {
                 追加
                </button>
              </div>
-             <ul>
+             <ul className="edit-list">
                {materials.map((material, index) => (
-                  <li key={index}>
+                  <li key={index} className="edit-list-item">
                     <span
-                      style={{
-                        opacity: material.deleted ? 0.4 : 1
-                      }}
+                      className={material.deleted ? "deleted-item" : ""}
                     >
-                   {material.name}
-                   </span>
-                   <button onClick={() => toggleDeleteMaterial(index)}>
-                    {material.deleted ? "戻す" : "削除"}
-                   </button>
+                      {material.name}
+                    </span>
+                    <button 
+                      className={
+                        material.deleted
+                          ? "secondary-button small-button"
+                          : "danger-button small-button"
+                      } 
+                      onClick={() => toggleDeleteMaterial(index)}
+                    >
+                      {material.deleted ? "戻す" : "削除"}
+                    </button>
                  </li>
                ))}
              </ul>
@@ -420,17 +425,22 @@ function Profile( {user, setAppUsername } ) {
                   追加
                </button> 
               </div>
-              <ul>
+              <ul className="edit-list">
                 {portfolios.map((portfolio, index) => (
-                  <li key={index}>
+                  <li key={index} className="edit-list-item">
                     <span
-                      style={{
-                        opacity: portfolio.deleted ? 0.4 : 1
-                      }}
-                    >
+                      className={portfolio.deleted ? "deleted-item" : ""}
+                    > 
                       {portfolio.title} : {portfolio.url}
                     </span>
-                    <button onClick={() => toggleDeletePortfolio(index)}>
+                    <button
+                      className={
+                        portfolio.deleted
+                          ? "secondary-button small-button"
+                          : "danger-button small-button"
+                      }
+                      onClick={() => toggleDeletePortfolio(index)}
+                    >
                       {portfolio.deleted ? "戻す" : "削除"}
                     </button>
                   </li>

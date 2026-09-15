@@ -443,3 +443,48 @@ nav a:hover {
 .profile-list li {
   margin-bottom: 6px;
 }
+
+.edit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.edit-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.deleted-item {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.small-button {
+  padding: 6px 10px;
+  flex-shrink: 0;
+}
+
+.danger-button {
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 16px;
+  background-color: white;
+  color: #dc2626;
+  font: inherit;
+  cursor: pointer;
+}
+
+.danger-button:hover {
+  background-color: #fef2f2;
+}
+
+@media (max-width: 600px) {
+  .edit-list-item {
+    align-items: flex-start;
+  }
+}
