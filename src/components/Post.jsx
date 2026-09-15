@@ -35,7 +35,7 @@ function Post({
           <RelativeTime createdAt={createdAt} />
           {editedAt && (
             <span className="edited-label">
-              ・ 編集済み
+              ・編集済み
             </span>
           )}
         </div>

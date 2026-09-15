@@ -127,7 +127,7 @@ function PostDetail({ user }) {
             {formatDateTime(post.created_at)}
             {post.edited_at && (
               <span className="edited-label">
-                ・ 編集済み
+                ・編集済み
               </span>
             )}
           </span>
