@@ -238,7 +238,8 @@ nav a:hover {
   align-items: center;
 }
 
-.post-actions button {
+.post-actions button,
+.post-detail-actions .repost-button {
   border: 1px solid var(--border);
   background-color: white;
   border-radius: 8px;
@@ -562,6 +563,13 @@ nav a:hover {
 
 .post-detail-likes {
   margin-top: 12px;
+}
+
+.post-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
 }
 
 .reply-section {

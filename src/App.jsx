@@ -401,6 +401,8 @@ function App() {
           element={
             <PostDetail
               user={user}
+              posts={posts}
+              repostPost={repostPost}
              />
           } 
         />

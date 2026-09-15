@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabaseClient";
 import Reply from "./Reply.jsx";
 import ReplyForm from "./ReplyForm.jsx";
 
-function PostDetail({ user }) {
+function PostDetail({ user, posts, repostPost }) {
   const { postId } = useParams();
   const [replies, setReplies] = useState([]);
   const [post, setPost] = useState(null);
@@ -36,7 +36,16 @@ function PostDetail({ user }) {
     async function loadPost() {
         const { data, error } = await supabase
           .from("posts")
-          .select("*, profiles (username), likes (user_id)")
+          .select(`
+            *,
+            profiles (username),
+            likes (user_id),
+            reposts (
+              user_id,
+              created_at,
+              profiles (username)
+            )
+          `)
           .eq("id", Number(postId))
           .single();
         if(error) {
@@ -52,6 +61,32 @@ function PostDetail({ user }) {
     loadPost();
   }, [postId]);
 
+  useEffect(() => {
+    const updatedPost = posts.find(
+      (item) => item.id === Number(postId)
+    );
+
+    if (!updatedPost || post?.id !== updatedPost.id) {
+      return;
+    }
+
+    // Mirror shared repost updates into the independently fetched detail record.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPost((currentPost) => {
+      if (
+        currentPost?.id !== updatedPost.id ||
+        currentPost.reposts === updatedPost.reposts
+      ) {
+        return currentPost;
+      }
+
+      return {
+        ...currentPost,
+        reposts: updatedPost.reposts ?? []
+      };
+    });
+  }, [posts, postId, post?.id]);
+
   if(isLoadingPost) {
     return <p>読み込み中...</p>;
   }
@@ -63,6 +98,14 @@ function PostDetail({ user }) {
   if (!post) {
     return <p>投稿が見つかりません。</p>;
   }
+
+  const isReposted =
+    user
+      ? post.reposts?.some(
+          (repost) => repost.user_id === user.id
+        ) ?? false
+      : false;
+
   function formatDateTime(createdAt) {
     const date = new Date(createdAt);
     const year = date.getFullYear();
@@ -134,7 +177,22 @@ function PostDetail({ user }) {
         </div>
         <h2 className="post-term">「{post.term}」</h2>
         <p className="post-explanation">{post.explanation}</p>
-        <p className="post-detail-likes">♡ {post.likes?.length ?? 0}</p>
+        <div className="post-detail-actions">
+          <span>♡ {post.likes?.length ?? 0}</span>
+          <button
+            className={
+              isReposted
+                ? "repost-button reposted"
+                : "repost-button"
+            }
+            aria-pressed={isReposted}
+            onClick={() => repostPost(post.id)}
+          >
+            {isReposted ? "↻ リポスト済み" : "↻ リポスト"}
+            {" "}
+            {post.reposts?.length ?? 0}
+          </button>
+        </div>
       </div>
       <section className="reply-section">
         <h3>返信</h3>
