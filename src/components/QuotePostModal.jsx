@@ -145,7 +145,7 @@ function QuotePostModal({ quotedPost, user, setPosts, onClose }) {
           ref={commentInputRef}
           id="quote-comment"
           className="form-textarea"
-          placeholder="例：この説明分かりやすかった"
+          placeholder="コメントを入力してください！"
           value={quoteComment}
           onChange={(event) => setQuoteComment(event.target.value)}
           disabled={isPosting}
