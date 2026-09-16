@@ -90,6 +90,8 @@ function App() {
               user_id,
               term,
               explanation,
+              quote_comment,
+              quoted_post_id,
               created_at,
               deleted_at,
               profiles (username)

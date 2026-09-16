@@ -11,17 +11,22 @@ function SearchPage({ posts, user, likePost, repostPost, openQuoteModal, isPosts
         return false;
     }
     const keyword = searchWord.trim().toLowerCase();
+    const termText = post.term ?? "";
+    const explanationText = post.explanation ?? "";
+    const quoteCommentText = post.quote_comment ?? "";
     const termMatches =
-      post.term.toLowerCase().includes(keyword);
+      termText.toLowerCase().includes(keyword);
     const explanationMatches =
-      post.explanation.toLowerCase().includes(keyword);
+      explanationText.toLowerCase().includes(keyword);
+    const quoteCommentMatches =
+      quoteCommentText.toLowerCase().includes(keyword);
     if (searchTarget === "term") {
       return termMatches;
     }
     if (searchTarget === "explanation") {
       return explanationMatches;
     }
-    return termMatches || explanationMatches;
+    return termMatches || explanationMatches || quoteCommentMatches;
   });
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     if(sortType === "likes") {
@@ -84,7 +89,7 @@ function SearchPage({ posts, user, likePost, repostPost, openQuoteModal, isPosts
               setSearchTarget(event.target.value)
             }
           />
-          用語または説明
+          用語・説明・コメント
         </label>
       </div>
       <div>
@@ -108,6 +113,8 @@ function SearchPage({ posts, user, likePost, repostPost, openQuoteModal, isPosts
               createdAt={post.created_at}
               editedAt={post.edited_at}
               quotedPost={post.quoted_post}
+              quotedPostId={post.quoted_post_id}
+              quoteComment={post.quote_comment}
               onQuote={openQuoteModal}
               likePost={likePost}
               repostPost={repostPost}

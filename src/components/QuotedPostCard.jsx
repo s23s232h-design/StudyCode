@@ -20,6 +20,8 @@ function QuotedPostCard({ quotedPost }) {
       </div>
       {quotedPost.deleted_at ? (
         <p className="quoted-post-deleted">この投稿は削除されました</p>
+      ) : quotedPost.quoted_post_id != null ? (
+        <p className="quote-comment">{quotedPost.quote_comment}</p>
       ) : (
         <>
           <h3 className="quoted-post-term">「{quotedPost.term}」</h3>

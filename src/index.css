@@ -713,6 +713,13 @@ nav a:hover {
   overflow-wrap: anywhere;
 }
 
+.quote-comment {
+  margin: 12px 0;
+  white-space: pre-wrap;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
 .quoted-post-header {
   display: flex;
   justify-content: space-between;

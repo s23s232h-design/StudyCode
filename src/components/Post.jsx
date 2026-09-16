@@ -13,6 +13,8 @@ function Post({
   createdAt,
   editedAt,
   quotedPost,
+  quotedPostId,
+  quoteComment,
   onQuote,
   likePost,
   repostPost,
@@ -24,6 +26,7 @@ function Post({
   setPostToEdit
 }) {
   const navigate = useNavigate();
+  const isQuotePost = quotedPostId != null || quotedPost != null;
   return (
     <div 
       className="post-card"
@@ -47,9 +50,17 @@ function Post({
         </div>
       </div>
       
-      <h2 className="post-term">「{term}」</h2>
-      <p className="post-explanation">{explanation}</p>
-      <QuotedPostCard quotedPost={quotedPost} />
+      {isQuotePost ? (
+        <>
+          <p className="quote-comment">{quoteComment}</p>
+          <QuotedPostCard quotedPost={quotedPost} />
+        </>
+      ) : (
+        <>
+          <h2 className="post-term">「{term}」</h2>
+          <p className="post-explanation">{explanation}</p>
+        </>
+      )}
       <div className="post-actions">
         <button
           className={isLiked ? "like-button liked" : "like-button"}
@@ -90,14 +101,14 @@ function Post({
               event.stopPropagation();
               setPostToDelete({
                 id: id,
-                term: term
+                term: isQuotePost ? quoteComment : term
               });
             }}
           >
             削除
           </button>
         )}
-        {canEdit && (
+        {canEdit && !isQuotePost && (
           <button
             className="edit-button"
             onClick={(event) => {

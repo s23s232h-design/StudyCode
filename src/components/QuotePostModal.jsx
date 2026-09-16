@@ -4,19 +4,18 @@ import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
 import QuotedPostCard from "./QuotedPostCard.jsx";
 
 function QuotePostModal({ quotedPost, user, setPosts, onClose }) {
-  const [quoteTerm, setQuoteTerm] = useState("");
-  const [quoteExplanation, setQuoteExplanation] = useState("");
+  const [quoteComment, setQuoteComment] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const modalRef = useRef(null);
-  const termInputRef = useRef(null);
+  const commentInputRef = useRef(null);
   const postingRef = useRef(false);
 
   useEffect(() => {
     const previousFocus = document.activeElement;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    termInputRef.current?.focus();
+    commentInputRef.current?.focus();
     return () => {
       document.body.style.overflow = previousOverflow;
       previousFocus?.focus();
@@ -71,8 +70,8 @@ function QuotePostModal({ quotedPost, user, setPosts, onClose }) {
       setErrorMessage("削除済みの投稿は引用できません");
       return;
     }
-    if (quoteTerm.trim() === "" || quoteExplanation.trim() === "") {
-      setErrorMessage("用語と説明を入力してください");
+    if (quoteComment.trim() === "") {
+      setErrorMessage("コメントを入力してください");
       return;
     }
 
@@ -84,8 +83,9 @@ function QuotePostModal({ quotedPost, user, setPosts, onClose }) {
         .from("posts")
         .insert({
           user_id: user.id,
-          term: quoteTerm,
-          explanation: quoteExplanation,
+          term: null,
+          explanation: null,
+          quote_comment: quoteComment.trim(),
           quoted_post_id: quotedPost.id
         })
         .select(`
@@ -140,26 +140,17 @@ function QuotePostModal({ quotedPost, user, setPosts, onClose }) {
       >
         <h3 id="quote-modal-title">投稿を引用</h3>
         <QuotedPostCard quotedPost={quotedPost} />
-        <label className="form-label" htmlFor="quote-term">用語</label>
-        <input
-          ref={termInputRef}
-          id="quote-term"
-          className="form-input"
-          value={quoteTerm}
-          onChange={(event) => setQuoteTerm(event.target.value)}
-          disabled={isPosting}
-          required
-        />
-        <label className="form-label" htmlFor="quote-explanation">説明</label>
+        <label className="form-label" htmlFor="quote-comment">コメント</label>
         <textarea
-          id="quote-explanation"
+          ref={commentInputRef}
+          id="quote-comment"
           className="form-textarea"
-          value={quoteExplanation}
-          onChange={(event) => setQuoteExplanation(event.target.value)}
+          placeholder="例：この説明分かりやすかった"
+          value={quoteComment}
+          onChange={(event) => setQuoteComment(event.target.value)}
           disabled={isPosting}
           required
         />
-        <p className="keyboard-hint">Alt + ↑↓ で入力欄を移動できます</p>
         {errorMessage && <p className="error" role="alert">{errorMessage}</p>}
         <div className="modal-actions">
           <button className="primary-button" type="submit" disabled={isPosting}>

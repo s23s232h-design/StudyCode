@@ -151,6 +151,8 @@ function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPos
                   createdAt={post.created_at}
                   editedAt={post.edited_at}
                   quotedPost={post.quoted_post}
+                  quotedPostId={post.quoted_post_id}
+                  quoteComment={post.quote_comment}
                   onQuote={openQuoteModal}
                   likePost={likePost}
                   repostPost={repostPost}

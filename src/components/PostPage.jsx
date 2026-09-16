@@ -79,6 +79,7 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
       .update({
         term: null,
         explanation: null,
+        quote_comment: null,
         deleted_at: deletedAt
       })
       .eq("id", id);
@@ -98,6 +99,7 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
           ...updatedPost,
           term: null,
           explanation: null,
+          quote_comment: null,
           deleted_at: deletedAt
         };
       }
@@ -108,6 +110,7 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
             ...post.quoted_post,
             term: null,
             explanation: null,
+            quote_comment: null,
             deleted_at: deletedAt
           }
         };
@@ -139,15 +142,19 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
       return true;
     }
     const keyword = searchTerm.trim().toLowerCase();
-    const termMatches = post.term.toLowerCase().includes(keyword);
-    const explanationMatches = post.explanation.toLowerCase().includes(keyword);
+    const termText = post.term ?? "";
+    const explanationText = post.explanation ?? "";
+    const quoteCommentText = post.quote_comment ?? "";
+    const termMatches = termText.toLowerCase().includes(keyword);
+    const explanationMatches = explanationText.toLowerCase().includes(keyword);
+    const quoteCommentMatches = quoteCommentText.toLowerCase().includes(keyword);
     if(searchTarget === "term") {
       return termMatches;
     }
     if(searchTarget === "explanation") {
       return explanationMatches;
     }
-    return termMatches || explanationMatches;
+    return termMatches || explanationMatches || quoteCommentMatches;
   });
 
   const sortedPosts = [...filteredPosts].sort((a, b) => {
@@ -217,7 +224,7 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
                 checked={searchTarget === "both"}
                 onChange={(event) => setSearchTarget(event.target.value)}
               />
-              用語または説明
+              用語・説明・コメント
             </label>
           </div>
         </div>
@@ -242,6 +249,8 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
               createdAt={post.created_at}
               editedAt={post.edited_at}
               quotedPost={post.quoted_post}
+              quotedPostId={post.quoted_post_id}
+              quoteComment={post.quote_comment}
               onQuote={openQuoteModal}
               likePost={likePost}
               repostPost={repostPost}
@@ -257,7 +266,7 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
                   ? handleDeletePost
                   : undefined
               }
-              canEdit={user && post.user_id === user.id}
+              canEdit={user && post.user_id === user.id && post.quoted_post_id == null}
               isLiked={
                 user
                 ? post.likes?.some((like) => like.user_id === user.id) ?? false

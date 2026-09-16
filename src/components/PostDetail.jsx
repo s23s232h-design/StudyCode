@@ -64,6 +64,8 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
               user_id,
               term,
               explanation,
+              quote_comment,
+              quoted_post_id,
               created_at,
               deleted_at,
               profiles (username)
@@ -124,7 +126,9 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
         reposts: updatedPost.reposts ?? [],
         quoted_post: updatedPost.quoted_post ?? null,
         deleted_at: updatedPost.deleted_at,
-        ...(updatedPost.deleted_at ? { term: null, explanation: null } : {})
+        ...(updatedPost.deleted_at
+          ? { term: null, explanation: null, quote_comment: null }
+          : {})
       };
     });
   }, [posts, postId, post?.id]);
@@ -221,9 +225,17 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
             )}
           </span>
         </div>
-        <h2 className="post-term">「{post.term}」</h2>
-        <p className="post-explanation">{post.explanation}</p>
-        <QuotedPostCard quotedPost={post.quoted_post} />
+        {post.quoted_post_id != null || post.quoted_post != null ? (
+          <>
+            <p className="quote-comment">{post.quote_comment}</p>
+            <QuotedPostCard quotedPost={post.quoted_post} />
+          </>
+        ) : (
+          <>
+            <h2 className="post-term">「{post.term}」</h2>
+            <p className="post-explanation">{post.explanation}</p>
+          </>
+        )}
         <div className="post-detail-actions">
           <span>♡ {post.likes?.length ?? 0}</span>
           <button
