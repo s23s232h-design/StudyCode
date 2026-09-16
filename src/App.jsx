@@ -1,4 +1,4 @@
-import { Routes, Route, NavLink } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "./lib/supabaseClient.js";
 import StudyTimer from "./components/StudyTimer.jsx";
@@ -10,6 +10,8 @@ import UserProfile from "./components/UserProfile.jsx";
 import SearchPage from "./components/SearchPage.jsx";
 import PostDetail from "./components/PostDetail.jsx";
 import QuotePostModal from "./components/QuotePostModal.jsx";
+import AppHeader from "./components/AppHeader.jsx";
+import MainNavigation from "./components/MainNavigation.jsx";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -305,70 +307,18 @@ function App() {
   
   return (
     <div>
-      <h2>StudyCode</h2>
+      <AppHeader
+        user={user}
+        username={username}
+        usernameError={usernameError}
+        signOut={signOut}
+      />
       {authError && (
         <p className="error" role="alert">
           {authError}
         </p>
       )}
-      <p>みんなの学びを見てみよう！</p>
-      {/*NavLinkのto=で指定したURLへ移動する:*/}      
-      <nav>
-        <NavLink
-          to="/"
-          className={({isActive}) => isActive ? "active" : ""}
-        >
-          ホーム
-        </NavLink>
-        <NavLink
-          to="/search"
-          className={({isActive}) => isActive ? "active" : ""} 
-        >
-          検索
-        </NavLink>
-        {user && (
-          <>    
-            <NavLink
-              to="/postpage"
-              className={({isActive}) => isActive ? "active" : ""}
-            >
-              投稿
-            </NavLink>
-            <NavLink
-              to="/timer"
-              className={({isActive}) => isActive ? "active" : ""}
-            >
-              タイマー
-            </NavLink>
-            <NavLink
-              to="/profile"
-              className={({isActive}) => isActive ? "active" : ""}
-            >
-              プロフィール
-            </NavLink>
-          </>
-        )}
-        {user ? (
-          <>
-            <span>ログイン中：{username || user.email}</span>
-            {usernameError && (
-              <p className={"error"} role="alert">
-                {usernameError}
-              </p>
-            )}
-            <button onClick={signOut}>
-              ログアウト
-            </button>
-          </>
-        ) : (
-          <NavLink
-            to="/login"
-            className={({isActive}) => isActive ? "active" : ""}
-          >
-            ログイン
-          </NavLink>
-        )}
-      </nav>
+      <MainNavigation user={user} />
       {/*現在のURLがpath=""に変わったら、element={}のコンポーネントを表示*/}
       <Routes>
         <Route
