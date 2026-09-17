@@ -36,7 +36,7 @@ function SearchPage({ posts, user, likePost, repostPost, openQuoteModal, isPosts
   });
   return (
     <div className="search-controls" onKeyDown={handleFormArrowNavigation}>
-      <h2>投稿検索</h2>
+      <h2>投稿を検索しよう！</h2>
       <input
         className="form-input"
         type="text"
@@ -44,7 +44,7 @@ function SearchPage({ posts, user, likePost, repostPost, openQuoteModal, isPosts
         onChange={(event) =>
           setSearchWord(event.target.value)
         }
-        placeholder="🔍検索"
+        placeholder="検索したい言葉を入力してください"
       />
       <select 
         className="form-select"

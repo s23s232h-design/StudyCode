@@ -27,9 +27,7 @@ function Home({ posts, likePost, repostPost, openQuoteModal, user, isPostsLoadin
       .slice(0, 10);
     return (
         <div>
-            <h3>ホーム</h3>
-            <p>StudyCodeへようこそ！</p>
-            <h3>タイムライン</h3>
+            <h3>みんなの投稿を見てみよう！</h3>
             {!user && (
               <p>
                 投稿やいいねをするにはログインしてください
