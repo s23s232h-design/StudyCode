@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 function RelativeTime({ createdAt }) {
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     const intervalId = setInterval(() => {

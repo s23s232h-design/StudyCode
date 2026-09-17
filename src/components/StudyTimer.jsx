@@ -2,9 +2,18 @@ import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 
 function StudyTimer({ user }) {
-    const [seconds, setSeconds] = useState(0);
-    const [intervalId, setIntervalId] = useState(null);
-    const [startTime, setStartTime] = useState(null);
+    const [seconds, setSeconds] = useState(() => {
+      const savedStartTime = Number(localStorage.getItem("timerStartTime"));
+      if (Number.isFinite(savedStartTime) && savedStartTime > 0) {
+        return Math.max(0, Math.floor((Date.now() - savedStartTime) / 1000));
+      }
+      const savedSeconds = Number(localStorage.getItem("timerSeconds"));
+      return Number.isFinite(savedSeconds) ? Math.max(0, Math.floor(savedSeconds)) : 0;
+    });
+    const [startTime, setStartTime] = useState(() => {
+      const savedStartTime = Number(localStorage.getItem("timerStartTime"));
+      return Number.isFinite(savedStartTime) && savedStartTime > 0 ? savedStartTime : null;
+    });
     const [totalStudySeconds, setTotalStudySeconds] = useState(0);
     const [todayStudySeconds, setTodayStudySeconds] = useState(0);
     const [weeklyStudySeconds, setWeeklyStudySeconds] = useState(0);
@@ -14,30 +23,18 @@ function StudyTimer({ user }) {
     const [saveErrorMessage, setSaveErrorMessage] = useState("");
     
     useEffect(() => {
-      const savedStartTime = localStorage.getItem("timerStartTime");
-      const savedSeconds = localStorage.getItem("timerSeconds");
-
-      let id = null;
-      if(savedStartTime) {
-        const start = Number(savedStartTime);
-        
-        const elapsedSeconds = Math.floor((Date.now() - start) / 1000);
-        setSeconds(elapsedSeconds);
-        
-        id = setInterval(() => {
-          const elapsedSeconds = Math.floor((Date.now() - start) / 1000);
-          setSeconds(elapsedSeconds);
-        }, 1000)
-        setIntervalId(id);
-      } else if (savedSeconds) {
-        setSeconds(Number(savedSeconds));
+      if (startTime === null) {
+        return;
       }
+
+      // 開始・復元したどちらのタイマーも、停止時と画面を離れるときに解除する。
+      const id = setInterval(() => {
+        setSeconds(Math.max(0, Math.floor((Date.now() - startTime) / 1000)));
+      }, 1000);
       return () => {
-        if(id !== null) {
-          clearInterval(id);
-        }
+        clearInterval(id);
       };
-    }, []);
+    }, [startTime]);
     
     useEffect(() => {
       let ignore = false;
@@ -122,25 +119,15 @@ function StudyTimer({ user }) {
       const now = Date.now() - seconds * 1000;
       setStartTime(now);
       localStorage.setItem("timerStartTime", String(now));
-      const id = setInterval(() => {
-          const elapsedMilliseconds = Date.now() - now;
-          const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
-          setSeconds(elapsedSeconds);
-      }, 1000);
-      setIntervalId(id);
     }
 
     function pauseTimer() {
-        clearInterval(intervalId);
-        setIntervalId(null);
         setStartTime(null);
         localStorage.removeItem("timerStartTime");
         localStorage.setItem("timerSeconds", String(seconds));
     }
 
     function resetTimer() {
-      clearInterval(intervalId);
-      setIntervalId(null);
       setStartTime(null);
       setSeconds(0);
       localStorage.removeItem("timerStartTime");
@@ -284,14 +271,14 @@ function StudyTimer({ user }) {
               <button
                 className="primary-button"
                 onClick={startTimer}
-                disabled={intervalId !== null}
+                disabled={startTime !== null}
               >
                 開始
               </button>
               <button
                 className="secondary-button"
                 onClick={pauseTimer}
-                disabled={intervalId === null}
+                disabled={startTime === null}
               >
                 一時停止
               </button>

@@ -34,7 +34,7 @@ function DeleteModal ({
       return () => {
         window.removeEventListener("keydown", handleKeyDown);
       };
-    }, [postToDelete,isDeleting]);  
+    }, [postToDelete, isDeleting, onClose]);
 
     useEffect(() => {
       document.body.style.overflow = "hidden";
