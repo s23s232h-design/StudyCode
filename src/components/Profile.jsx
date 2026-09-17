@@ -393,21 +393,21 @@ function Profile({ user, setAppUsername, setAppAvatarUrl, updateAppProfile }) {
   if(!user) {
     return (
       <div>
-        <h3>プロフィール</h3>
-        <p>プロフィールを見るにはログインしてください</p>
+        <div className="page-header"><h2 className="page-title">プロフィール</h2></div>
+        <p className="empty-state">プロフィールを見るにはログインしてください</p>
       </div>
     );
   }
   return (
     <div className="profile-form">
-      <h3>プロフィール</h3>
+      <div className="page-header"><h2 className="page-title">プロフィール</h2></div>
       {isLoading && <p role="status">読み込み中...</p>}
       {!isLoading && errorMessage && (
         <p className="error" role="alert">{errorMessage}</p>
       )}
       {!isLoading && (!errorMessage || isEditing) && (
         isEditing ? (
-          <div onKeyDown={handleFormArrowNavigation}>
+          <div className="profile-editor" onKeyDown={handleFormArrowNavigation}>
             <Avatar avatarUrl={avatarUrl} username={username} size="large" />
             <label className="form-label" htmlFor="avatar-file">
               プロフィール画像
@@ -558,14 +558,12 @@ function Profile({ user, setAppUsername, setAppAvatarUrl, updateAppProfile }) {
           </div>
         ) : (
           <div className="profile-view">
-            <Avatar avatarUrl={avatarUrl} username={username} size="large" />
-            <div className="profile-section">
-              <p className="profile-label">ユーザー名</p>
-              <p className="profile-value">{username}</p>
-          </div>
-            <div className="profile-section">
-              <p className="profile-label">自己紹介</p>
-              <p className="profile-value">{introduction}</p>
+            <div className="profile-overview">
+              <Avatar avatarUrl={avatarUrl} username={username} size="large" />
+              <div>
+                <h3 className="profile-name">{username || "ユーザー名未設定"}</h3>
+                <p className="profile-value">{introduction || "自己紹介はまだ登録されていません。"}</p>
+              </div>
             </div>
             <div className="profile-section">
               <p className="profile-label">累計学習時間</p>
@@ -573,6 +571,9 @@ function Profile({ user, setAppUsername, setAppAvatarUrl, updateAppProfile }) {
             </div>
             <div className="profile-section">
               <p className="profile-label">使用している教材</p>
+              {materials.length === 0 && (
+                <p className="empty-state">登録されている教材はありません</p>
+              )}
               <ul className="profile-list">
                 {materials.map((material, index) => (
                   <li key={index}>
@@ -583,6 +584,9 @@ function Profile({ user, setAppUsername, setAppAvatarUrl, updateAppProfile }) {
             </div>
             <div className="profile-section">
               <p className="profile-label">ポートフォリオ</p>
+              {portfolios.length === 0 && (
+                <p className="empty-state">登録されているポートフォリオはありません</p>
+              )}
               <ul className="profile-list">
                 {portfolios.map((portfolio, index) => (
                   <li key={index}>

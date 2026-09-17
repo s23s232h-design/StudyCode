@@ -166,7 +166,12 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
 
   return (
     <div>
-        <h3>学んだことを投稿しよう！</h3>
+        <section className="page-section">
+          <div className="page-header">
+            <h2 className="page-title">投稿を作成</h2>
+            <p className="page-description">今日学んだことを、自分の言葉で残しましょう。</p>
+          </div>
+          <div className="section-card">
         <PostForm
           term={term}
           setTerm={setTerm}
@@ -177,64 +182,81 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
           messageType={messageType}
           isPosting={isPosting}
         />
+          </div>
+        </section>
+        <section className="page-section">
+          <div className="page-header">
+            <h2 className="page-title">自分の投稿</h2>
+            <p className="page-description">これまでの学びを振り返りましょう。</p>
+          </div>
         <div className="search-controls" onKeyDown={handleFormArrowNavigation}>
-          <h3>過去の自分の投稿を検索</h3>
-          <input 
+          <label className="form-label search-input-label" htmlFor="my-post-keyword">キーワード</label>
+          <input
+            id="my-post-keyword"
             className="form-input"
             type="text"
-            placeholder="検索する言葉を入力"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="検索する言葉を入力"
           />
-
-          <select 
-            className="form-select"
-            value={sortType}
-            onChange={(event) => setSortType(event.target.value)}
-          >
-          <option value="new">新着順</option>
-          <option value="likes">いいね順</option>
-          </select>
-          <div className="radio-group">
-            <label>
-              <input
-                type="radio"
-                name="searchTarget"
-                value="term"
-                checked={searchTarget === "term"}
-                onChange={(event) => setSearchTarget(event.target.value)}
-              />
-              用語
+          <div className="search-filter">
+            <span className="form-label">検索対象</span>
+            <div className="radio-group" role="group" aria-label="検索対象">
+              <label>
+                <input
+                  type="radio"
+                  name="searchTarget"
+                  value="term"
+                  checked={searchTarget === "term"}
+                  onChange={(event) => setSearchTarget(event.target.value)}
+                />
+                用語
               </label>
-            <label>
-              <input
-                type="radio"
-                name="searchTarget"
-                value="explanation"
-                checked={searchTarget === "explanation"}
-                onChange={(event) => setSearchTarget(event.target.value)}
-              />
-              説明
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="searchTarget"
-                value="both"
-                checked={searchTarget === "both"}
-                onChange={(event) => setSearchTarget(event.target.value)}
-              />
-              用語・説明・コメント
-            </label>
+              <label>
+                <input
+                  type="radio"
+                  name="searchTarget"
+                  value="explanation"
+                  checked={searchTarget === "explanation"}
+                  onChange={(event) => setSearchTarget(event.target.value)}
+                />
+                説明
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="searchTarget"
+                  value="both"
+                  checked={searchTarget === "both"}
+                  onChange={(event) => setSearchTarget(event.target.value)}
+                />
+                用語・説明・コメント
+              </label>
+            </div>
+          </div>
+          <div className="search-filter">
+            <label className="form-label" htmlFor="my-post-sort">並び順</label>
+            <select
+              id="my-post-sort"
+              className="form-select"
+              value={sortType}
+              onChange={(event) => setSortType(event.target.value)}
+            >
+              <option value="new">新着順</option>
+              <option value="likes">いいね順</option>
+            </select>
           </div>
         </div>
 
+        {!isPostsLoading && !postsError && searchTerm.trim() === "" && sortedPosts.length === 0 && (
+          <p className="empty-state">まだ投稿がありません</p>
+        )}
         {isPostsLoading ? (
           <p role="status">読み込み中...</p>
         ) : postsError ? (
           <p className="error" role="alert">{postsError}</p>
         ) : searchTerm.trim() !== "" && sortedPosts.length === 0 ? (
-          <p>該当する投稿がありません</p>
+          <p className="empty-state">該当する投稿がありません</p>
         ) : (
           sortedPosts.map((post) => (
             <Post
@@ -278,6 +300,7 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
             />
           ))
         )}
+        </section>
         {postToDelete !== null && (
           <DeleteModal
             postToDelete={postToDelete}

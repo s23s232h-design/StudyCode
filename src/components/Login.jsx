@@ -73,7 +73,10 @@ function Login() {
 
   return (
     <div className="auth-page">
-      <h3>新規登録 / ログイン</h3>
+      <div className="page-header">
+        <h2 className="page-title">新規登録 / ログイン</h2>
+        <p className="page-description">学びを記録して、つながりましょう。</p>
+      </div>
 
       <form className="auth-form" onKeyDown={handleFormArrowNavigation}>
         <label className="form-label" htmlFor="email">

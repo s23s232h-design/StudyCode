@@ -15,13 +15,15 @@ function Reply({
   return (
     <div className="reply-card">
       <div className="reply-header">
-        <Link className="post-author post-username" to={`/users/${userId}`}>
+        <Link className="post-author" to={`/users/${userId}`}>
           <Avatar avatarUrl={avatarUrl} username={username} size="small" />
-          <span>{username}</span>
         </Link>
-        <span className="post-time">
-          <RelativeTime createdAt={createdAt} />
-        </span>
+        <div className="post-author-info">
+          <Link className="post-username" to={`/users/${userId}`}>{username}</Link>
+          <span className="post-time">
+            <RelativeTime createdAt={createdAt} />
+          </span>
+        </div>
       </div>
       <p className="reply-content">{content}</p>
       {canDelete && (

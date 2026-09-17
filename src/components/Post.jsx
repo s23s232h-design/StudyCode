@@ -36,20 +36,26 @@ function Post({
     >
       <div className="post-header">
         <Link
-          className="post-author post-username"
+          className="post-author"
           to={`/users/${userId}`}
           onClick={(event) => event.stopPropagation()}
         >
           <Avatar avatarUrl={avatarUrl} username={username} size="small" />
-          <span>{username}</span>
         </Link>
-        <div className="post-time">
-          <RelativeTime createdAt={createdAt} />
-          {editedAt && (
-            <span className="edited-label">
-              ・編集済み
-            </span>
-          )}
+        <div className="post-author-info">
+          <Link
+            className="post-username"
+            to={`/users/${userId}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            {username}
+          </Link>
+          <div className="post-time">
+            <RelativeTime createdAt={createdAt} />
+            {editedAt && (
+              <span className="edited-label">・編集済み</span>
+            )}
+          </div>
         </div>
       </div>
       

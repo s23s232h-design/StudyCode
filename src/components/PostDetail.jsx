@@ -143,11 +143,11 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
   }
 
   if (!post) {
-    return <p>投稿が見つかりません。</p>;
+    return <p className="empty-state">投稿が見つかりません。</p>;
   }
 
   if (post.deleted_at) {
-    return <p>この投稿は削除されました</p>;
+    return <p className="empty-state">この投稿は削除されました</p>;
   }
 
   const isReposted =
@@ -214,14 +214,17 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
     <div className="post-detail">
       <div className="post-detail-card">
         <div className="post-detail-header">
-          <Link className="post-author post-username" to={`/users/${post.user_id}`}>
+          <Link className="post-author" to={`/users/${post.user_id}`}>
             <Avatar
               avatarUrl={post.profiles?.avatar_url}
               username={post.profiles?.username}
               size="small"
             />
-            <span>{post.profiles?.username}</span>
           </Link>
+          <div className="post-author-info">
+            <Link className="post-username" to={`/users/${post.user_id}`}>
+              {post.profiles?.username}
+            </Link>
           <span className="post-time">
             {formatDateTime(post.created_at)}
             {post.edited_at && (
@@ -230,6 +233,7 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
               </span>
             )}
           </span>
+          </div>
         </div>
         {post.quoted_post_id != null || post.quoted_post != null ? (
           <>
@@ -279,7 +283,7 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
         <div className="reply-list">
           {replyError ? null : (
             replies.length === 0 ? (
-              <p>まだ返信はありません</p>
+              <p className="empty-state">まだ返信はありません</p>
             ) : (
               replies.map((reply) => (
                 <Reply

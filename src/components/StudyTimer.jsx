@@ -234,13 +234,17 @@ function StudyTimer({ user }) {
     if(!user) {
       return (
         <div className="timer-page">
-          <h3>学習タイマー</h3>
-          <p>学習時間を記録するにはログインしてください</p>
+          <div className="page-header"><h2 className="page-title">学習タイマー</h2></div>
+          <p className="empty-state">学習時間を記録するにはログインしてください</p>
         </div>
       )
     }
     return (
         <div className="timer-page">
+          <div className="page-header">
+            <h2 className="page-title">学習タイマー</h2>
+            <p className="page-description">集中した時間を記録して、日々の積み重ねを確かめましょう。</p>
+          </div>
           {isLoading ? (
             <p role="status">読み込み中...</p>
           ) : errorMessage ? (
@@ -248,9 +252,9 @@ function StudyTimer({ user }) {
           ) : (
             <div className="study-summary-grid">
               <div className="study-summary-card">
-                <p className="study-summary-label">累計学習時間</p>
+                <p className="study-summary-label">今日の学習時間</p>
                 <p className="study-summary-time">
-                  {totalDisplayHours}:{totalDisplayMinutes}:{totalDisplaySeconds}
+                  {todayDisplayHours}:{todayDisplayMinutes}:{todayDisplaySeconds}
                 </p>
               </div>
               <div className="study-summary-card">
@@ -260,9 +264,9 @@ function StudyTimer({ user }) {
                 </p>
               </div>
               <div className="study-summary-card">
-                <p className="study-summary-label">今日の学習時間</p>
+                <p className="study-summary-label">累計学習時間</p>
                 <p className="study-summary-time">
-                  {todayDisplayHours}:{todayDisplayMinutes}:{todayDisplaySeconds}
+                  {totalDisplayHours}:{totalDisplayMinutes}:{totalDisplaySeconds}
                 </p>
               </div>
             </div>

@@ -87,25 +87,32 @@ function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPos
     );
     return(
         <div>
-          <h3>ユーザープロフィール</h3>
+          <div className="page-header"><h2 className="page-title">ユーザープロフィール</h2></div>
           {isLoading ? (
             <p role="status">読み込み中...</p>
           ) : errorMessage ? (
             <p className="error" role="alert">{errorMessage}</p>
           ) : (
-            <>
+            <div className="profile-view">
+              <div className="profile-overview">
               <Avatar avatarUrl={avatarUrl} username={username} size="large" />
-              <p>ユーザー名：{username || "未設定"}</p>
-              <p>自己紹介：{introduction || "未設定"}</p>
-              <p>
-                累計学習時間：
+              <div>
+                <h3 className="profile-name">{username || "未設定"}</h3>
+                <p className="profile-value">{introduction || "未設定"}</p>
+              </div>
+              </div>
+              <div className="profile-section">
+                <h3 className="profile-label">累計学習時間</h3>
+                <p className="profile-value">
                 {totalHours}時間{totalMinutes}分
               </p>
-              <h3>使用している教材</h3>
+              </div>
+              <div className="profile-section">
+              <h3 className="profile-label">使用している教材</h3>
               {materials.length === 0 ? (
-                <p>登録されている教材はありません</p>
+                <p className="empty-state">登録されている教材はありません</p>
               ) : (
-                <ul>
+                <ul className="profile-list">
                   {materials.map((material) => (
                     <li key={material.id}>
                       {material.name}
@@ -113,11 +120,13 @@ function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPos
                   ))}
                 </ul>
               )}
-              <h3>ポートフォリオ</h3>
+              </div>
+              <div className="profile-section">
+              <h3 className="profile-label">ポートフォリオ</h3>
               {portfolios.length === 0 ? (
-                <p>登録されているポートフォリオはありません</p>
+                <p className="empty-state">登録されているポートフォリオはありません</p>
               ) : (
-                <ul>
+                <ul className="profile-list">
                   {portfolios.map((portfolio) => (
                     <li key={portfolio.id}>
                       {portfolio.title} :{" "}
@@ -132,15 +141,17 @@ function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPos
                   ))}
                 </ul>
               )}
-            </>
+              </div>
+            </div>
           )}
-          <h3>投稿</h3>
+          <section className="page-section">
+          <div className="page-header"><h2 className="page-title">投稿</h2></div>
           {isPostsLoading ? (
             <p role="status">読み込み中...</p>
           ) : postsError ? (
             <p className="error" role="alert">{postsError}</p>
           ) : userPosts.length === 0 ? (
-            <p>まだ投稿がありません</p>
+            <p className="empty-state">まだ投稿がありません</p>
           ) : (
             userPosts.map((post) => (
                 <Post
@@ -178,6 +189,7 @@ function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPos
                 />
             ))
           )}
+          </section>
         </div>
     );
 }

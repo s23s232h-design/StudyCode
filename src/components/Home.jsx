@@ -27,9 +27,12 @@ function Home({ posts, likePost, repostPost, openQuoteModal, user, isPostsLoadin
       .slice(0, 10);
     return (
         <div>
-            <h3>みんなの投稿を見てみよう！</h3>
+            <div className="page-header">
+              <h2 className="page-title">みんなの学び</h2>
+              <p className="page-description">日々の発見や学びを、みんなで共有しましょう。</p>
+            </div>
             {!user && (
-              <p>
+              <p className="page-description">
                 投稿やいいねをするにはログインしてください
               </p>
             )}
@@ -38,7 +41,7 @@ function Home({ posts, likePost, repostPost, openQuoteModal, user, isPostsLoadin
             ) : postsError ? (
                 <p className="error" role="alert">{postsError}</p>
             ) : sortedTimelineEvents.length === 0 ? (
-                <p>まだ投稿がありません</p>
+                <p className="empty-state">まだ投稿がありません</p>
             ) : (
               sortedTimelineEvents.map((event) => {
                 const { post } = event;

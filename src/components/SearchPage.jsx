@@ -35,70 +35,79 @@ function SearchPage({ posts, user, likePost, repostPost, openQuoteModal, isPosts
     return new Date(b.created_at) - new Date(a.created_at);
   });
   return (
-    <div className="search-controls" onKeyDown={handleFormArrowNavigation}>
-      <h2>投稿を検索しよう！</h2>
-      <input
-        className="form-input"
-        type="text"
-        value={searchWord}
-        onChange={(event) =>
-          setSearchWord(event.target.value)
-        }
-        placeholder="検索したい言葉を入力してください"
-      />
-      <select 
-        className="form-select"
-        value={sortType}
-        onChange={(event) => setSortType(event.target.value)}
-      >
-        <option value="new">新着順</option>
-        <option value="likes">いいね順</option>
-      </select>
-      <div className="radio-group">
-        <label>
-          <input
-            type="radio"
-            name="searchTarget"
-            value="term"
-            checked={searchTarget === "term"}
-            onChange={(event) =>
-              setSearchTarget(event.target.value)
-            }
-          />
-          用語
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="searchTarget"
-            value="explanation"
-            checked={searchTarget === "explanation"}
-            onChange={(event) =>
-              setSearchTarget(event.target.value)
-            }
-          />
-          説明
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="searchTarget"
-            value="both"
-            checked={searchTarget === "both"}
-            onChange={(event) =>
-              setSearchTarget(event.target.value)
-            }
-          />
-          用語・説明・コメント
-        </label>
+    <div>
+      <div className="page-header">
+        <h2 className="page-title">投稿を検索</h2>
+        <p className="page-description">学んだ用語や、気になるコメントを探してみましょう。</p>
       </div>
-      <div>
+      <div className="search-controls" onKeyDown={handleFormArrowNavigation}>
+          <label className="form-label search-input-label" htmlFor="search-keyword">キーワード</label>
+          <input
+            id="search-keyword"
+            className="form-input"
+            type="text"
+            value={searchWord}
+            onChange={(event) => setSearchWord(event.target.value)}
+            placeholder="検索したい言葉を入力してください"
+          />
+          <div className="search-filter">
+            <span className="form-label">検索対象</span>
+            <div className="radio-group" role="group" aria-label="検索対象">
+              <label>
+                <input
+                  type="radio"
+                  name="searchTarget"
+                  value="term"
+                  checked={searchTarget === "term"}
+                  onChange={(event) => setSearchTarget(event.target.value)}
+                />
+                用語
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="searchTarget"
+                  value="explanation"
+                  checked={searchTarget === "explanation"}
+                  onChange={(event) => setSearchTarget(event.target.value)}
+                />
+                説明
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="searchTarget"
+                  value="both"
+                  checked={searchTarget === "both"}
+                  onChange={(event) => setSearchTarget(event.target.value)}
+                />
+                用語・説明・コメント
+              </label>
+            </div>
+          </div>
+          <div className="search-filter">
+            <label className="form-label" htmlFor="search-sort">並び順</label>
+            <select
+              id="search-sort"
+              className="form-select"
+              value={sortType}
+              onChange={(event) => setSortType(event.target.value)}
+            >
+              <option value="new">新着順</option>
+              <option value="likes">いいね順</option>
+            </select>
+          </div>
+        </div>
+      <div className="search-results">
+        {!isPostsLoading && !postsError && searchWord.trim() === "" && (
+          <p className="empty-state">キーワードを入力して、みんなの学びを探しましょう。</p>
+        )}
         {isPostsLoading ? (
             <p role="status">読み込み中...</p>
         ) : postsError ? (
             <p className="error" role="alert">{postsError}</p>
         ) : searchWord.trim() !== "" && filteredPosts.length === 0 ? (
-            <p>該当する投稿がありません</p>
+            <p className="empty-state">該当する投稿がありません</p>
         ) : (
           sortedPosts.map((post) => (
             <Post

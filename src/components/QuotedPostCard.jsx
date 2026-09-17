@@ -12,17 +12,19 @@ function QuotedPostCard({ quotedPost }) {
       onClick={(event) => event.stopPropagation()}
     >
       <div className="quoted-post-header">
-        <div className="post-author quoted-post-username">
           <Avatar
             avatarUrl={quotedPost.profiles?.avatar_url}
             username={quotedPost.profiles?.username}
             size="small"
           />
-          <span>{quotedPost.profiles?.username || "ユーザー"}</span>
+        <div className="post-author-info">
+          <span className="quoted-post-username">
+            {quotedPost.profiles?.username || "ユーザー"}
+          </span>
+          <span className="quoted-post-time">
+            <RelativeTime createdAt={quotedPost.created_at} />
+          </span>
         </div>
-        <span className="quoted-post-time">
-          <RelativeTime createdAt={quotedPost.created_at} />
-        </span>
       </div>
       {quotedPost.deleted_at ? (
         <p className="quoted-post-deleted">この投稿は削除されました</p>
