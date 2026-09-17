@@ -1,4 +1,5 @@
 import RelativeTime from "./RelativeTime.jsx";
+import Avatar from "./Avatar.jsx";
 
 function QuotedPostCard({ quotedPost }) {
   if (!quotedPost) {
@@ -11,9 +12,14 @@ function QuotedPostCard({ quotedPost }) {
       onClick={(event) => event.stopPropagation()}
     >
       <div className="quoted-post-header">
-        <span className="quoted-post-username">
-          {quotedPost.profiles?.username || "ユーザー"}
-        </span>
+        <div className="post-author quoted-post-username">
+          <Avatar
+            avatarUrl={quotedPost.profiles?.avatar_url}
+            username={quotedPost.profiles?.username}
+            size="small"
+          />
+          <span>{quotedPost.profiles?.username || "ユーザー"}</span>
+        </div>
         <span className="quoted-post-time">
           <RelativeTime createdAt={quotedPost.created_at} />
         </span>

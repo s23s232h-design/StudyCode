@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import Post from "./Post";
+import Avatar from "./Avatar.jsx";
 
 function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPostsLoading, postsError }) {
     const { userId } = useParams();
     const [username, setUsername] = useState("");
+    const [avatarUrl, setAvatarUrl] = useState("");
     const [introduction, setIntroduction] = useState("");
     const userPosts = posts.filter((post) => {
         return post.user_id === userId && !post.deleted_at;
@@ -23,7 +25,7 @@ function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPos
             try {
               const { data, error } = await supabase
                 .from("profiles")
-                .select("username, introduction")
+                .select("username, introduction, avatar_url")
                 .eq("id", userId)
                 .maybeSingle();
               if(error) {
@@ -54,6 +56,7 @@ function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPos
                 return;
               }
               setUsername(data?.username ?? "");
+              setAvatarUrl(data?.avatar_url ?? "");
               setIntroduction(data?.introduction ?? "");
               setMaterials(materialData ?? []);
               setPortfolios(portfolioData ?? []);
@@ -91,6 +94,7 @@ function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPos
             <p className="error" role="alert">{errorMessage}</p>
           ) : (
             <>
+              <Avatar avatarUrl={avatarUrl} username={username} size="large" />
               <p>ユーザー名：{username || "未設定"}</p>
               <p>自己紹介：{introduction || "未設定"}</p>
               <p>
@@ -144,6 +148,7 @@ function UserProfile( { posts, likePost, repostPost, openQuoteModal, user, isPos
                   id={post.id}
                   userId={post.user_id}
                   username={post.profiles?.username || "ユーザー"}
+                  avatarUrl={post.profiles?.avatar_url}
                   term={post.term}
                   explanation={post.explanation}
                   likes={post.likes?.length ?? 0}

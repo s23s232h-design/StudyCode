@@ -48,6 +48,7 @@ function Home({ posts, likePost, repostPost, openQuoteModal, user, isPostsLoadin
                     id={post.id}
                     userId={post.user_id}
                     username={post.profiles?.username || "ユーザー"}
+                    avatarUrl={post.profiles?.avatar_url}
                     term={post.term}
                     explanation={post.explanation}
                     likes={post.likes?.length ?? 0}

@@ -19,6 +19,7 @@ function App() {
   const [postsError, setPostsError] = useState("");
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authError, setAuthError] = useState("");
@@ -66,12 +67,12 @@ function App() {
           .from("posts")
           .select(`
             *,
-            profiles (username),
+            profiles (username, avatar_url),
             likes (user_id),
             reposts (
               user_id,
               created_at,
-              profiles (username)
+              profiles (username, avatar_url)
             )
           `)
           .order("created_at", {ascending: false});
@@ -96,7 +97,7 @@ function App() {
               quoted_post_id,
               created_at,
               deleted_at,
-              profiles (username)
+              profiles (username, avatar_url)
             `)
             .in("id", quotedPostIds);
           if (quotedPostsError) {
@@ -132,17 +133,22 @@ function App() {
     };
   }, []);
   useEffect(() => {
+    let ignore = false;
     async function loadUsername() {
       if(!user) {
         setUsername("");
+        setAvatarUrl("");
         setUsernameError("");
         return;
       }
       const { data, error } = await supabase
         .from("profiles")
-        .select("username")
+        .select("username, avatar_url")
         .eq("id", user.id)
         .maybeSingle();
+      if (ignore) {
+        return;
+      }
       if(error) {
         console.log(error.message);
         setUsernameError("ユーザー情報の読み込みに失敗しました");
@@ -150,8 +156,12 @@ function App() {
       }
       setUsernameError("");
       setUsername(data?.username ?? "");
+      setAvatarUrl(data?.avatar_url ?? "");
     }
     loadUsername();
+    return () => {
+      ignore = true;
+    };
   }, [user]);
   async function signOut() {
     const { error } = await supabase.auth.signOut();
@@ -267,7 +277,7 @@ function App() {
           user_id: user.id,
           post_id: postId
         })
-        .select("user_id, created_at, profiles (username)")
+        .select("user_id, created_at, profiles (username, avatar_url)")
         .single();
       if(error) {
         console.log(error.message);
@@ -310,6 +320,7 @@ function App() {
       <AppHeader
         user={user}
         username={username}
+        avatarUrl={avatarUrl}
         usernameError={usernameError}
         signOut={signOut}
       />
@@ -374,6 +385,7 @@ function App() {
             <Profile 
               user={user}
               setAppUsername={setUsername}
+              setAppAvatarUrl={setAvatarUrl}
             />
           }
         />

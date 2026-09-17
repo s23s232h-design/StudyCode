@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabaseClient";
 import Reply from "./Reply.jsx";
 import ReplyForm from "./ReplyForm.jsx";
 import QuotedPostCard from "./QuotedPostCard.jsx";
+import Avatar from "./Avatar.jsx";
 
 function PostDetail({ user, posts, repostPost, openQuoteModal }) {
   const { postId } = useParams();
@@ -19,7 +20,7 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
     async function loadReplies() {
         const { data, error } = await supabase
           .from("replies")
-          .select("*, profiles (username)")
+          .select("*, profiles (username, avatar_url)")
           .eq("post_id", Number(postId))
           .order("created_at", { ascending: true });
         if(error) {
@@ -42,12 +43,12 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
           .from("posts")
           .select(`
             *,
-            profiles (username),
+            profiles (username, avatar_url),
             likes (user_id),
             reposts (
               user_id,
               created_at,
-              profiles (username)
+              profiles (username, avatar_url)
             )
           `)
           .eq("id", Number(postId))
@@ -68,7 +69,7 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
               quoted_post_id,
               created_at,
               deleted_at,
-              profiles (username)
+              profiles (username, avatar_url)
             `)
             .eq("id", data.quoted_post_id)
             .maybeSingle();
@@ -178,7 +179,7 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
         post_id: Number(postId),
         content: content
       })
-      .select("*, profiles (username)")
+      .select("*, profiles (username, avatar_url)")
       .single();
     if(error) {
         console.log(error.message);
@@ -213,8 +214,13 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
     <div className="post-detail">
       <div className="post-detail-card">
         <div className="post-detail-header">
-          <Link className="post-username" to={`/users/${post.user_id}`}>
-            {post.profiles?.username}
+          <Link className="post-author post-username" to={`/users/${post.user_id}`}>
+            <Avatar
+              avatarUrl={post.profiles?.avatar_url}
+              username={post.profiles?.username}
+              size="small"
+            />
+            <span>{post.profiles?.username}</span>
           </Link>
           <span className="post-time">
             {formatDateTime(post.created_at)}
@@ -280,6 +286,7 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
                   key={reply.id}
                   userId={reply.user_id}
                   username={reply.profiles?.username}
+                  avatarUrl={reply.profiles?.avatar_url}
                   content={reply.content}
                   createdAt={reply.created_at}
                   canDelete={user && reply.user_id === user.id}

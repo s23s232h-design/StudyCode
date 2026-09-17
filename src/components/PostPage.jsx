@@ -38,12 +38,12 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
       })
       .select(`
         *,
-        profiles (username),
+        profiles (username, avatar_url),
         likes (user_id),
         reposts (
           user_id,
           created_at,
-          profiles (username)
+          profiles (username, avatar_url)
         )
       `)
       .single();
@@ -242,6 +242,7 @@ function PostPage({ posts, setPosts, likePost, repostPost, openQuoteModal, user,
               id={post.id}
               userId={post.user_id}
               username={post.profiles?.username || "ユーザー"}
+              avatarUrl={post.profiles?.avatar_url}
               term={post.term}
               explanation={post.explanation}
               likes={post.likes?.length ?? 0}

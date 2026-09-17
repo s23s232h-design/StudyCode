@@ -90,12 +90,12 @@ function QuotePostModal({ quotedPost, user, setPosts, onClose }) {
         })
         .select(`
           *,
-          profiles (username),
+          profiles (username, avatar_url),
           likes (user_id),
           reposts (
             user_id,
             created_at,
-            profiles (username)
+            profiles (username, avatar_url)
           )
         `)
         .single();

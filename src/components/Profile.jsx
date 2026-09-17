@@ -1,9 +1,16 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { handleFormArrowNavigation } from "../utils/formKeyboardNavigation.js";
+import Avatar from "./Avatar.jsx";
 
-function Profile( {user, setAppUsername } ) {
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
+
+function Profile({ user, setAppUsername, setAppAvatarUrl }) {
   const [username, setUsername] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [isAvatarUploading, setIsAvatarUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
   const [introduction, setIntroduction] = useState(""); 
   const [isEditing, setIsEditing] = useState(false);
   const [materials, setMaterials] = useState([]);
@@ -29,7 +36,7 @@ function Profile( {user, setAppUsername } ) {
       try {
         const { data, error } = await supabase
           .from("profiles")
-          .select("username, introduction")
+          .select("username, introduction, avatar_url")
           .eq("id", user.id)
           .maybeSingle();
         if(error) {
@@ -60,6 +67,7 @@ function Profile( {user, setAppUsername } ) {
           return;
         }
         setUsername(data?.username ?? "");
+        setAvatarUrl(data?.avatar_url ?? "");
         setIntroduction(data?.introduction ?? "");
         setMaterials(
           (materialData ?? []).map((material) => ({
@@ -147,25 +155,69 @@ function Profile( {user, setAppUsername } ) {
     });
     setMaterials(newMaterials);
   }
+  function handleAvatarFileChange(event) {
+    const file = event.target.files?.[0];
+    setAvatarFile(null);
+    setAvatarError("");
+    if (!file) {
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      setAvatarError("画像ファイルを選択してください");
+      return;
+    }
+    if (file.size > MAX_AVATAR_SIZE) {
+      setAvatarError("プロフィール画像は5MB以下にしてください");
+      return;
+    }
+    setAvatarFile(file);
+  }
+
   async function saveProfile() {
     if(!user) {
       alert("プロフィールを保存するにはログインしてください")
       return;
     }
+    if (isSaving || isAvatarUploading || avatarError) {
+      return;
+    }
     setIsSaving(true);
     setSaveErrorMessage("");
     try {
+    let avatarUrlToSave = avatarUrl;
+    if (avatarFile) {
+      setIsAvatarUploading(true);
+      const avatarPath = `${user.id}/avatar`;
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(avatarPath, avatarFile, {
+          upsert: true,
+          contentType: avatarFile.type
+        });
+      if (uploadError) {
+        throw uploadError;
+      }
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(avatarPath);
+      avatarUrlToSave = `${publicUrl}?v=${Date.now()}`;
+      setIsAvatarUploading(false);
+    }
     const { error } = await supabase
       .from("profiles")
       .upsert({
         id: user.id,
         username: username,
-        introduction: introduction
+        introduction: introduction,
+        avatar_url: avatarUrlToSave
       });
     if(error) {
       throw error;
     }
     setAppUsername(username);
+    setAvatarUrl(avatarUrlToSave);
+    setAppAvatarUrl(avatarUrlToSave);
+    setAvatarFile(null);
     const materialsToDelete = materials.filter((material) => {
       return material.deleted && material.id;
     });
@@ -272,18 +324,21 @@ function Profile( {user, setAppUsername } ) {
       console.log(error.message);
       setSaveErrorMessage("プロフィールの保存に失敗しました")
     } finally {
+      setIsAvatarUploading(false);
       setIsSaving(false);
     }
   }
   async function cancelEdit() {
-    if(!user) {
+    if(!user || isSaving || isAvatarUploading) {
       return;
     }
+    setAvatarFile(null);
+    setAvatarError("");
     setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("username, introduction")
+        .select("username, introduction, avatar_url")
         .eq("id", user.id)
         .maybeSingle();
       if(error) {
@@ -304,6 +359,7 @@ function Profile( {user, setAppUsername } ) {
         throw portfolioError;
       }
       setUsername(data?.username ?? "");
+      setAvatarUrl(data?.avatar_url ?? "");
       setIntroduction(data?.introduction ?? "");
       setMaterials(
         (materialData ?? []).map((material) => ({
@@ -347,6 +403,25 @@ function Profile( {user, setAppUsername } ) {
       {!isLoading && (!errorMessage || isEditing) && (
         isEditing ? (
           <div onKeyDown={handleFormArrowNavigation}>
+            <Avatar avatarUrl={avatarUrl} username={username} size="large" />
+            <label className="form-label" htmlFor="avatar-file">
+              プロフィール画像
+            </label>
+            <input
+              key={avatarUrl}
+              id="avatar-file"
+              className="form-input"
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarFileChange}
+              disabled={isSaving || isAvatarUploading}
+              aria-describedby="avatar-file-hint"
+              aria-invalid={Boolean(avatarError)}
+            />
+            <p id="avatar-file-hint" className="keyboard-hint">
+              5MB以下の画像を選択してください。
+            </p>
+            {avatarError && <p className="error" role="alert">{avatarError}</p>}
             <label className="form-label">
               ユーザー名
             </label>
@@ -451,12 +526,14 @@ function Profile( {user, setAppUsername } ) {
               <button
                 className="primary-button"
                 onClick={saveProfile}
-                disabled={isSaving}
+                disabled={isSaving || isAvatarUploading || Boolean(avatarError)}
               >
                 {isSaving ? "保存中..." : "保存"}
               </button>
               {isSaving && (
-                <p role="status">保存中...</p>
+                <p role="status">
+                  {isAvatarUploading ? "画像をアップロード中..." : "保存中..."}
+                </p>
               )}
               {!isSaving && saveErrorMessage && (
                 <p className="error" role="alert">
@@ -465,7 +542,8 @@ function Profile( {user, setAppUsername } ) {
               )}
               <button 
                 className="secondary-button"
-                onClick={cancelEdit}>
+                onClick={cancelEdit}
+                disabled={isSaving || isAvatarUploading}>
                 キャンセル
               </button>
             </div>
@@ -475,6 +553,7 @@ function Profile( {user, setAppUsername } ) {
           </div>
         ) : (
           <div className="profile-view">
+            <Avatar avatarUrl={avatarUrl} username={username} size="large" />
             <div className="profile-section">
               <p className="profile-label">ユーザー名</p>
               <p className="profile-value">{username}</p>

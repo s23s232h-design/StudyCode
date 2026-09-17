@@ -206,27 +206,62 @@ html {
   font-size: 14px;
 }
 
-.account-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: var(--accent-bg);
-  color: var(--accent);
-}
-
-.account-icon svg {
-  width: 20px;
-  height: 20px;
-}
-
 .account-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.avatar {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+img.avatar {
+  display: block;
+}
+
+.avatar-small {
+  width: 36px;
+  height: 36px;
+}
+
+.avatar-medium {
+  width: 48px;
+  height: 48px;
+}
+
+.avatar-large {
+  width: 96px;
+  height: 96px;
+}
+
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border: 1px solid var(--border);
+}
+
+.avatar-placeholder svg {
+  width: 55%;
+  height: 55%;
+}
+
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.post-author > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .account-area .secondary-button {
@@ -843,7 +878,7 @@ html {
 .quoted-post-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 8px;

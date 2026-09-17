@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import RelativeTime from "../components/RelativeTime.jsx";
 import QuotedPostCard from "./QuotedPostCard.jsx";
+import Avatar from "./Avatar.jsx";
 
 function Post({
   id, 
   userId,
   username,
+  avatarUrl,
   term,
   explanation, 
   likes, 
@@ -34,11 +36,12 @@ function Post({
     >
       <div className="post-header">
         <Link
-          className="post-username"
+          className="post-author post-username"
           to={`/users/${userId}`}
           onClick={(event) => event.stopPropagation()}
         >
-          {username}
+          <Avatar avatarUrl={avatarUrl} username={username} size="small" />
+          <span>{username}</span>
         </Link>
         <div className="post-time">
           <RelativeTime createdAt={createdAt} />

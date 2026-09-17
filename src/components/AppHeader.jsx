@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { User } from "lucide-react";
+import Avatar from "./Avatar.jsx";
 
-function AppHeader({ user, username, usernameError, signOut }) {
+function AppHeader({ user, username, avatarUrl, usernameError, signOut }) {
   const displayName = username || user?.email;
 
   return (
@@ -11,9 +11,7 @@ function AppHeader({ user, username, usernameError, signOut }) {
         {user ? (
           <>
             <div className="account-user" title={displayName}>
-              <span className="account-icon" aria-hidden="true">
-                <User />
-              </span>
+              <Avatar avatarUrl={avatarUrl} username={displayName} size="small" />
               <span className="account-name">{displayName}</span>
             </div>
             <button className="secondary-button" type="button" onClick={signOut}>

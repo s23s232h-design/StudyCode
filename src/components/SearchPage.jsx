@@ -106,6 +106,7 @@ function SearchPage({ posts, user, likePost, repostPost, openQuoteModal, isPosts
               id={post.id}
               userId={post.user_id}
               username={post.profiles?.username}
+              avatarUrl={post.profiles?.avatar_url}
               term={post.term}
               explanation={post.explanation}
               likes={post.likes?.length ?? 0}
