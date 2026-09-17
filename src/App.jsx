@@ -163,6 +163,60 @@ function App() {
       ignore = true;
     };
   }, [user]);
+  function updateCurrentUserProfile({ userId, username, avatarUrl }) {
+    setPosts((currentPosts) =>
+      currentPosts.map((post) => {
+        let updatedPost = post;
+
+        if (post.user_id === userId) {
+          updatedPost = {
+            ...updatedPost,
+            profiles: {
+              ...(updatedPost.profiles ?? {}),
+              username,
+              avatar_url: avatarUrl
+            }
+          };
+        }
+
+        if (updatedPost.quoted_post?.user_id === userId) {
+          updatedPost = {
+            ...updatedPost,
+            quoted_post: {
+              ...updatedPost.quoted_post,
+              profiles: {
+                ...(updatedPost.quoted_post.profiles ?? {}),
+                username,
+                avatar_url: avatarUrl
+              }
+            }
+          };
+        }
+
+        if (updatedPost.reposts?.some((repost) => repost.user_id === userId)) {
+          updatedPost = {
+            ...updatedPost,
+            reposts: updatedPost.reposts.map((repost) => {
+              if (repost.user_id !== userId) {
+                return repost;
+              }
+              return {
+                ...repost,
+                profiles: {
+                  ...(repost.profiles ?? {}),
+                  username,
+                  avatar_url: avatarUrl
+                }
+              };
+            })
+          };
+        }
+
+        return updatedPost;
+      })
+    );
+  }
+
   async function signOut() {
     const { error } = await supabase.auth.signOut();
     //↑成功したらerrorはnull、失敗したらmessage等の情報をもつerrorが返ってくる
@@ -386,6 +440,7 @@ function App() {
               user={user}
               setAppUsername={setUsername}
               setAppAvatarUrl={setAvatarUrl}
+              updateAppProfile={updateCurrentUserProfile}
             />
           }
         />

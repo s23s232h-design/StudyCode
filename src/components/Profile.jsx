@@ -5,7 +5,7 @@ import Avatar from "./Avatar.jsx";
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
 
-function Profile({ user, setAppUsername, setAppAvatarUrl }) {
+function Profile({ user, setAppUsername, setAppAvatarUrl, updateAppProfile }) {
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarFile, setAvatarFile] = useState(null);
@@ -217,6 +217,11 @@ function Profile({ user, setAppUsername, setAppAvatarUrl }) {
     setAppUsername(username);
     setAvatarUrl(avatarUrlToSave);
     setAppAvatarUrl(avatarUrlToSave);
+    updateAppProfile({
+      userId: user.id,
+      username,
+      avatarUrl: avatarUrlToSave
+    });
     setAvatarFile(null);
     const materialsToDelete = materials.filter((material) => {
       return material.deleted && material.id;
