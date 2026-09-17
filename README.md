@@ -85,7 +85,6 @@ Row Level Security（行単位のアクセス制御）で、投稿や返信な�
 ```bash
 git clone https://github.com/s23s232h-design/StudyCode.git
 cd StudyCode
-git switch release-prep
 npm ci
 ```
 
