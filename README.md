@@ -1,12 +1,12 @@
+# StudyCode
+
+プログラミング学習者向けのSNSです。学んだ用語や自分なりの理解を投稿し、他の学習者の説明や学習記録を見ながら、知識を深めることを目的に制作しています。
+
 ## 公開URL
 
 https://study-code-seven.vercel.app
 
 [StudyCodeを開く](https://study-code-seven.vercel.app)
-
-# StudyCode
-
-プログラミング学習者向けのSNSです。学んだ用語や自分なりの理解を投稿し、他の学習者の説明や学習記録を見ながら、知識を深めることを目的に制作しています。
 
 ## アプリ概要
 
