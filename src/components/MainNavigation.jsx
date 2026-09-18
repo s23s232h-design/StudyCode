@@ -5,7 +5,7 @@ const navigationItems = [
   { to: "/", label: "ホーム", Icon: House },
   { to: "/search", label: "検索", Icon: Search },
   { to: "/postpage", label: "投稿", Icon: SquarePlus, requiresUser: true },
-  { to: "/timer", label: "タイマー", Icon: Timer, requiresUser: true },
+  { to: "/timer", label: "タイマー", Icon: Timer, },
   { to: "/profile", label: "プロフィール", Icon: User, requiresUser: true }
 ];
 

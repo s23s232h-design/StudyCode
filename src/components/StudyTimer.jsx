@@ -218,45 +218,39 @@ function StudyTimer({ user }) {
     const weeklyDisplayMinutes = String(weeklyMinutes).padStart(2, "0");
     const weeklyDisplaySeconds = String(weeklySecs).padStart(2, "0");  
 
-    if(!user) {
-      return (
-        <div className="timer-page">
-          <div className="page-header"><h2 className="page-title">学習タイマー</h2></div>
-          <p className="empty-state">学習時間を記録するにはログインしてください</p>
-        </div>
-      )
-    }
     return (
         <div className="timer-page">
           <div className="page-header">
             <h2 className="page-title">学習タイマー</h2>
             <p className="page-description">集中した時間を記録して、日々の積み重ねを確かめましょう。</p>
           </div>
-          {isLoading ? (
-            <p role="status">読み込み中...</p>
-          ) : errorMessage ? (
-            <p className="error" role="alert">{errorMessage}</p>
-          ) : (
-            <div className="study-summary-grid">
-              <div className="study-summary-card">
-                <p className="study-summary-label">今日の学習時間</p>
-                <p className="study-summary-time">
-                  {todayDisplayHours}:{todayDisplayMinutes}:{todayDisplaySeconds}
-                </p>
+          {user && (
+            isLoading ? (
+              <p role="status">読み込み中...</p>
+            ) : errorMessage ? (
+              <p className="error" role="alert">{errorMessage}</p>
+            ) : (
+              <div className="study-summary-grid">
+                <div className="study-summary-card">
+                  <p className="study-summary-label">今日の学習時間</p>
+                  <p className="study-summary-time">
+                    {todayDisplayHours}:{todayDisplayMinutes}:{todayDisplaySeconds}
+                  </p>
+                </div>
+                <div className="study-summary-card">
+                  <p className="study-summary-label">今週の学習時間</p>
+                  <p className="study-summary-time">
+                    {weeklyDisplayHours}:{weeklyDisplayMinutes}:{weeklyDisplaySeconds}
+                  </p>
+                </div>
+                <div className="study-summary-card">
+                  <p className="study-summary-label">累計学習時間</p>
+                  <p className="study-summary-time">
+                    {totalDisplayHours}:{totalDisplayMinutes}:{totalDisplaySeconds}
+                  </p>
+                </div>
               </div>
-              <div className="study-summary-card">
-                <p className="study-summary-label">今週の学習時間</p>
-                <p className="study-summary-time">
-                  {weeklyDisplayHours}:{weeklyDisplayMinutes}:{weeklyDisplaySeconds}
-                </p>
-              </div>
-              <div className="study-summary-card">
-                <p className="study-summary-label">累計学習時間</p>
-                <p className="study-summary-time">
-                  {totalDisplayHours}:{totalDisplayMinutes}:{totalDisplaySeconds}
-                </p>
-              </div>
-            </div>
+            )
           )}
           <div className="timer-card">
             <h3>学習タイマー</h3>
@@ -273,7 +267,7 @@ function StudyTimer({ user }) {
                 onClick={startTimer}
                 disabled={startTime !== null}
               >
-                開始
+                {seconds > 0 ? "再開" : "開始"}
               </button>
               <button
                 className="secondary-button"
@@ -296,6 +290,11 @@ function StudyTimer({ user }) {
               >
                 {isSaving ? "記録中..." : "学習時間を記録"}
               </button>
+              {!user && (
+                <p className="keyboard-hint">
+                  学習時間を記録するにはログインが必要です
+                </p>
+              )}
             </div>
           </div>
         </div>
