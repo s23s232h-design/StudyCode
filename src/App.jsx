@@ -470,6 +470,7 @@ function App() {
               posts={posts}
               repostPost={repostPost}
               openQuoteModal={openQuoteModal}
+              likePost={likePost}
              />
           } 
         />

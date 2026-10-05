@@ -10,23 +10,34 @@ function SearchPage({ posts, user, likePost, repostPost, openQuoteModal, isPosts
     if(post.deleted_at || searchWord.trim() === "") {
         return false;
     }
-    const keyword = searchWord.trim().toLowerCase();
+    const keywords = searchWord.trim().toLowerCase().split(/\s+/);
     const termText = post.term ?? "";
     const explanationText = post.explanation ?? "";
     const quoteCommentText = post.quote_comment ?? "";
-    const termMatches =
-      termText.toLowerCase().includes(keyword);
-    const explanationMatches =
-      explanationText.toLowerCase().includes(keyword);
-    const quoteCommentMatches =
-      quoteCommentText.toLowerCase().includes(keyword);
+    const termLower = termText.toLowerCase();
+    const explanationLower = explanationText.toLowerCase();
+    const quoteCommentLower = quoteCommentText.toLowerCase();
+    const termMatches = keywords.every((keyword) =>
+      termLower.includes(keyword)
+    );
+    const explanationMatches = keywords.every((keyword) =>
+      explanationLower.includes(keyword)
+    );
+    const allTexts = [
+      termLower,
+      explanationLower,
+      quoteCommentLower
+    ];
+    const bothMatches = keywords.every((keyword) =>
+      allTexts.some((text) => text.includes(keyword))
+    );
     if (searchTarget === "term") {
       return termMatches;
     }
     if (searchTarget === "explanation") {
       return explanationMatches;
     }
-    return termMatches || explanationMatches || quoteCommentMatches;
+    return bothMatches;
   });
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     if(sortType === "likes") {

@@ -6,7 +6,7 @@ import ReplyForm from "./ReplyForm.jsx";
 import QuotedPostCard from "./QuotedPostCard.jsx";
 import Avatar from "./Avatar.jsx";
 
-function PostDetail({ user, posts, repostPost, openQuoteModal }) {
+function PostDetail({ user, posts, likePost, repostPost, openQuoteModal }) {
   const { postId } = useParams();
   const [replies, setReplies] = useState([]);
   const [post, setPost] = useState(null);
@@ -114,6 +114,7 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
       if (
         currentPost?.id !== updatedPost.id ||
         (
+          currentPost.likes === updatedPost.likes &&
           currentPost.reposts === updatedPost.reposts &&
           currentPost.quoted_post === updatedPost.quoted_post &&
           currentPost.deleted_at === updatedPost.deleted_at
@@ -124,6 +125,7 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
 
       return {
         ...currentPost,
+        likes: updatedPost.likes ?? [],
         reposts: updatedPost.reposts ?? [],
         quoted_post: updatedPost.quoted_post ?? null,
         deleted_at: updatedPost.deleted_at,
@@ -149,6 +151,13 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
   if (post.deleted_at) {
     return <p className="empty-state">この投稿は削除されました</p>;
   }
+
+  const isLiked = 
+    user
+      ? post.likes?.some(
+          (like) => like.user_id === user.id
+        ) ?? false
+      : false;
 
   const isReposted =
     user
@@ -247,7 +256,13 @@ function PostDetail({ user, posts, repostPost, openQuoteModal }) {
           </>
         )}
         <div className="post-detail-actions">
-          <span>♡ {post.likes?.length ?? 0}</span>
+          <button
+            className={isLiked ? "like-button liked" : "like-button"}
+            aria-pressed={isLiked}
+            onClick={() => likePost(post.id)}
+          >
+            {isLiked ? "♥" : "♡"} {post.likes?.length ?? 0}
+          </button>
           <button
             className={
               isReposted

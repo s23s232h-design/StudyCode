@@ -634,3 +634,14 @@ button.posting:disabled { opacity: 0.75; font-weight: 700; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
 }
+
+.post-actions .like-button,
+.post-detail-actions .like-button {
+  min-width: 58px;
+} 
+
+.post-actions .like-button.liked,
+.post-detail-actions .like-button.liked {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
